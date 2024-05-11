@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on fran6k</title>
+    <link>https://fran6k.live/post/</link>
+    <description>Recent content in Posts on fran6k</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sat, 14 Jan 2023 20:13:00 +0800</lastBuildDate><atom:link href="https://fran6k.live/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>k8s源码2-LabelSelector-Parse</title>
+      <link>https://fran6k.live/post/k8s%E6%BA%90%E7%A0%812-labelselector-parse/</link>
+      <pubDate>Sat, 14 Jan 2023 20:13:00 +0800</pubDate>
+      
+      <guid>https://fran6k.live/post/k8s%E6%BA%90%E7%A0%812-labelselector-parse/</guid>
+      
+        <description>&lt;p&gt;Selector Parse&lt;/p&gt;</description>
+      
+    </item>
+    
+    <item>
+      <title>k8s源码1-LabelSelector-Selector</title>
+      <link>https://fran6k.live/post/k8s%E6%BA%90%E7%A0%811-labelselector-selector/</link>
+      <pubDate>Fri, 13 Jan 2023 22:21:00 +0800</pubDate>
+      
+      <guid>https://fran6k.live/post/k8s%E6%BA%90%E7%A0%811-labelselector-selector/</guid>
+      
+        <description>&lt;p&gt;打算做一个k8s源码阅读系列。k8s在云原生领域一骑绝尘，也有很多专业人士发表了k8s源码剖析相关的文章，所以此系列文章仅仅记录个人学习与收获。&lt;/p&gt;</description>
+      
+    </item>
+    
+    <item>
+      <title>博客迁移中</title>
+      <link>https://fran6k.live/post/demo/</link>
+      <pubDate>Thu, 12 Jan 2023 20:47:41 +0800</pubDate>
+      
+      <guid>https://fran6k.live/post/demo/</guid>
+      
+        <description>hi～最近刚搬了新博客，由于之前写的文章在旧电脑上，所以开学后才能把文章搬过来。</description>
+      
+    </item>
+    
+    <item>
+      <title>2022这一年</title>
+      <link>https://fran6k.live/post/2022%E8%BF%99%E4%B8%80%E5%B9%B4/</link>
+      <pubDate>Wed, 11 Jan 2023 23:47:41 +0800</pubDate>
+      
+      <guid>https://fran6k.live/post/2022%E8%BF%99%E4%B8%80%E5%B9%B4/</guid>
+      
+        <description>&lt;p&gt;收获满满，占坑待填&lt;/p&gt;</description>
+      
+    </item>
+    
+    <item>
+      <title>2021这一年</title>
+      <link>https://fran6k.live/post/2021%E8%BF%99%E4%B8%80%E5%B9%B4/</link>
+      <pubDate>Thu, 30 Dec 2021 23:00:00 +0800</pubDate>
+      
+      <guid>https://fran6k.live/post/2021%E8%BF%99%E4%B8%80%E5%B9%B4/</guid>
+      
+        <description>&lt;p&gt;忙碌充实的一年&lt;/p&gt;</description>
+      
+    </item>
+    
+  </channel>
+</rss>

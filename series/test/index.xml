@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>test on fran6k</title>
+    <link>https://fran6k.live/series/test/</link>
+    <description>Recent content in test on fran6k</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 12 Jan 2023 20:47:41 +0800</lastBuildDate><atom:link href="https://fran6k.live/series/test/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>博客迁移中</title>
+      <link>https://fran6k.live/post/demo/</link>
+      <pubDate>Thu, 12 Jan 2023 20:47:41 +0800</pubDate>
+      
+      <guid>https://fran6k.live/post/demo/</guid>
+      
+        <description>hi～最近刚搬了新博客，由于之前写的文章在旧电脑上，所以开学后才能把文章搬过来。</description>
+      
+    </item>
+    
+  </channel>
+</rss>

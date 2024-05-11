@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html
+  dir="ltr"
+  lang="zh-cn"
+  data-theme=""
+  
+    class="html theme--light"
+  
+><head>
+  <title>
+    fran6k&#39;s blog
+        |
+        k8s源码2-LabelSelector-Parse
+      
+
+    
+
+  </title>
+
+  
+  <meta charset="utf-8" /><meta name="generator" content="Hugo 0.109.0"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="author" content="fran6k&#39;s blog" />
+  <meta
+    name="description"
+    content="学生｜后端｜云原生
+在这里分享一些技术沉淀
+"
+  />
+  
+  
+    
+    
+    <link
+      rel="stylesheet"
+      href="/scss/main.min.92de3cff13378c641d2cbb8405e2a828d852b25fc41fd4243cea506abb34db6c.css"
+      integrity="sha256-kt48/xM3jGQdLLuEBeKoKNhSsl/EH9QkPOpQars022w="
+      crossorigin="anonymous"
+      type="text/css"
+    />
+  
+
+  
+  <link
+    rel="stylesheet"
+    href="/css/markupHighlight.min.2d1384e713286a803f77dd52bedaf63bc9a1428da2f19b58559e17412f43bdac.css"
+    integrity="sha256-LROE5xMoaoA/d91Svtr2O8mhQo2i8ZtYVZ4XQS9Dvaw="
+    crossorigin="anonymous"
+    type="text/css"
+  />
+  
+    
+    
+    <link
+      rel="stylesheet"
+      href="/css/syntax.min.7ac04f67eca661571e942c0456c2b00f691243597031edab6852106211ba1dd2.css"
+      integrity="sha256-esBPZ&#43;ymYVcelCwEVsKwD2kSQ1lwMe2raFIQYhG6HdI="
+      crossorigin="anonymous"
+      media="screen"
+    />
+  
+    
+    
+    <link
+      rel="stylesheet"
+      href="/css/font.min.a95b4e5e61f0a7de6467fcc23cb70b4d8ec5a888e31f4471b960baaa912e9540.css"
+      integrity="sha256-qVtOXmHwp95kZ/zCPLcLTY7FqIjjH0RxuWC6qpEulUA="
+      crossorigin="anonymous"
+      media="screen"
+    />
+  
+  
+  <link
+    rel="stylesheet"
+    href="/fontawesome/css/fontawesome.min.7d272de35b410fb165377550cdf9c4d3a80fbbcc961e111914e4d5c0eaf5729f.css"
+    integrity="sha256-fSct41tBD7FlN3VQzfnE06gPu8yWHhEZFOTVwOr1cp8="
+    crossorigin="anonymous"
+    type="text/css"
+  />
+  
+  <link
+    rel="stylesheet"
+    href="/fontawesome/css/solid.min.55d8333481b07a08e07cf6f37319753a2b47e99f4c395394c5747b48b495aa9b.css"
+    integrity="sha256-VdgzNIGwegjgfPbzcxl1OitH6Z9MOVOUxXR7SLSVqps="
+    crossorigin="anonymous"
+    type="text/css"
+  />
+  
+  <link
+    rel="stylesheet"
+    href="/fontawesome/css/regular.min.a7448d02590b43449364b6b5922ed9af5410abb4de4238412a830316dedb850b.css"
+    integrity="sha256-p0SNAlkLQ0STZLa1ki7Zr1QQq7TeQjhBKoMDFt7bhQs="
+    crossorigin="anonymous"
+    type="text/css"
+  />
+  
+  <link
+    rel="stylesheet"
+    href="/fontawesome/css/brands.min.9ed75a5d670c953fe4df935937674b4646f92674367e9e66eb995bb04e821647.css"
+    integrity="sha256-ntdaXWcMlT/k35NZN2dLRkb5JnQ2fp5m65lbsE6CFkc="
+    crossorigin="anonymous"
+    type="text/css"
+  />
+  
+  <link rel="shortcut icon" href="/favicons/favicon.ico" type="image/x-icon" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png" />
+
+  <link rel="canonical" href="https://fran6k.live/post/k8s%E6%BA%90%E7%A0%812-labelselector-parse/" />
+
+  
+  
+  
+  
+  <script
+    type="text/javascript"
+    src="/js/anatole-header.min.f9132794301a01ff16550ed66763482bd848f62243d278f5e550229a158bfd32.js"
+    integrity="sha256-&#43;RMnlDAaAf8WVQ7WZ2NIK9hI9iJD0nj15VAimhWL/TI="
+    crossorigin="anonymous"
+  ></script>
+
+  
+    
+    
+    <script
+      type="text/javascript"
+      src="/js/anatole-theme-switcher.min.d6d329d93844b162e8bed1e915619625ca91687952177552b9b3e211014a2957.js"
+      integrity="sha256-1tMp2ThEsWLovtHpFWGWJcqRaHlSF3VSubPiEQFKKVc="
+      crossorigin="anonymous"
+    ></script>
+  
+
+  
+
+
+  
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="k8s源码2-LabelSelector-Parse"/>
+<meta name="twitter:description" content="Selector Parse"/>
+
+
+
+  
+  <meta property="og:title" content="k8s源码2-LabelSelector-Parse" />
+<meta property="og:description" content="Selector Parse" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fran6k.live/post/k8s%E6%BA%90%E7%A0%812-labelselector-parse/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-01-14T20:13:00+08:00" />
+<meta property="article:modified_time" content="2023-01-14T20:13:00+08:00" /><meta property="og:site_name" content="fran6k" />
+
+
+
+
+
+  
+  
+  
+  
+  <script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "articleSection": "post",
+        "name": "k8s源码2-LabelSelector-Parse",
+        "headline": "k8s源码2-LabelSelector-Parse",
+        "alternativeHeadline": "",
+        "description": "
+      
+        \u003cp\u003eSelector Parse\u003c\/p\u003e
+
+
+      
+
+
+    ",
+        "inLanguage": "zh-cn",
+        "isFamilyFriendly": "true",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/fran6k.live\/post\/k8s%E6%BA%90%E7%A0%812-labelselector-parse\/"
+        },
+        "author" : {
+            "@type": "Person",
+            "name": "fran6k\u0027s blog"
+        },
+        "creator" : {
+            "@type": "Person",
+            "name": "fran6k\u0027s blog"
+        },
+        "accountablePerson" : {
+            "@type": "Person",
+            "name": "fran6k\u0027s blog"
+        },
+        "copyrightHolder" : {
+            "@type": "Person",
+            "name": "fran6k\u0027s blog"
+        },
+        "copyrightYear" : "2023",
+        "dateCreated": "2023-01-14T20:13:00.00Z",
+        "datePublished": "2023-01-14T20:13:00.00Z",
+        "dateModified": "2023-01-14T20:13:00.00Z",
+        "publisher":{
+            "@type":"Organization",
+            "name": "fran6k's blog",
+            "url": "https://fran6k.live",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/fran6k.live\/favicons\/favicon-32x32.png",
+                "width":"32",
+                "height":"32"
+            }
+        },
+        "image": 
+      [
+      ]
+
+    ,
+        "url" : "https:\/\/fran6k.live\/post\/k8s%E6%BA%90%E7%A0%812-labelselector-parse\/",
+        "wordCount" : "321",
+        "genre" : [ 
+      
+      "技术"
+
+    ],
+        "keywords" : [ ]
+    }
+  </script>
+
+
+</head>
+<body class="body">
+    <div class="wrapper">
+      <aside
+        
+          class="wrapper__sidebar"
+        
+      ><div
+  class="sidebar
+    animated fadeInDown
+  "
+>
+  <div class="sidebar__content">
+    <div class="sidebar__introduction">
+      <img
+        class="sidebar__introduction-profileimage"
+        src="/images/avatar2.png"
+        alt="profile picture"
+      />
+      
+        <div class="sidebar__introduction-title">
+          <a href="/">fran6k</a>
+        </div>
+      
+      <div class="sidebar__introduction-description">
+        <p>学生｜后端｜云原生<br />在这里分享一些技术沉淀<br /></p>
+      </div>
+    </div>
+    <ul class="sidebar__list">
+      
+    </ul>
+  </div><footer class="footer footer__sidebar">
+  <ul class="footer__list">
+    <li class="footer__item">
+      &copy;
+      
+        2023
+      
+    </li>
+    
+      <li class="footer__item">
+        <a
+          class="link"
+          href="https://beian.miit.gov.cn/#/Integrated/index"
+          
+            target="_blank" rel="noopener noreferrer"
+          
+          title=""
+        >
+          晋ICP备20007820号-1
+        </a>
+      </li>
+    
+  </ul>
+</footer>
+  
+  <script
+    type="text/javascript"
+    src="/js/medium-zoom.min.1248fa75275e5ef0cbef27e8c1e27dc507c445ae3a2c7d2ed0be0809555dac64.js"
+    integrity="sha256-Ekj6dSdeXvDL7yfoweJ9xQfERa46LH0u0L4ICVVdrGQ="
+    crossorigin="anonymous"
+  ></script></div>
+</aside>
+      <main
+        
+          class="wrapper__main"
+        
+      >
+        <header class="header"><div
+  class="
+    animated fadeInDown
+  "
+>
+  <a role="button" class="navbar-burger" data-target="navMenu" aria-label="menu" aria-expanded="false">
+    <span aria-hidden="true" class="navbar-burger__line"></span>
+    <span aria-hidden="true" class="navbar-burger__line"></span>
+    <span aria-hidden="true" class="navbar-burger__line"></span>
+  </a>
+  <nav class="nav">
+    <ul class="nav__list" id="navMenu">
+      
+      
+        
+        
+          <li class="nav__list-item">
+            <a
+              
+              href="/"
+              
+              title=""
+              >主页</a
+            >
+          </li>
+        
+
+      
+        
+        
+          <li class="nav__list-item">
+            <a
+              
+              href="/post/"
+              
+              title=""
+              >文章</a
+            >
+          </li>
+        
+
+      
+        
+        
+          <li class="nav__list-item">
+            <a
+              
+              href="/about/"
+              
+              title=""
+              >关于</a
+            >
+          </li>
+        
+
+      
+        
+        
+          <li class="nav__list-item">
+            <a
+              
+              href="/friend-link/"
+              
+              title=""
+              >友情链接</a
+            >
+          </li>
+        
+
+      
+    </ul>
+    <ul class="nav__list nav__list--end">
+      
+      
+        <li class="nav__list-item">
+          <div class="themeswitch">
+            <a title="Switch Theme">
+              <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a>
+          </div>
+        </li>
+      
+    </ul>
+  </nav>
+</div>
+</header>
+  <div
+    class="post 
+      animated fadeInDown
+    "
+  >
+    
+    <div class="post__content">
+      <h1>K8s源码2-LabelSelector-Parse</h1>
+      
+        <ul class="post__meta">
+          <li class="post__meta-item">
+            <em class="fas fa-calendar-day post__meta-icon"></em>
+            <span class="post__meta-text"
+              >
+                
+                  2023年1月14日 20:13
+                
+
+              
+            </span>
+          </li>
+          <li class="post__meta-item">
+            <em class="fas fa-stopwatch post__meta-icon"></em>
+            <span class="post__meta-text">阅读时间 2 分钟</span>
+          </li>
+        </ul>
+      <p>Selector Parse</p>
+<h1 id="使用方法">使用方法</h1>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">lq</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">Parse</span><span class="p">(</span><span class="s">&#34;x=y,a=b&#34;</span><span class="p">)</span>
+</span></span></code></pre></div><h1 id="源码分析">源码分析</h1>
+<p>Parse函数调用parse，构造Parser对象，之后调用Parser.parse()方法，返回一个实现了Selector接口的internalSelector对象。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">Parse</span><span class="p">(</span><span class="nx">selector</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">opts</span> <span class="o">...</span><span class="nx">field</span><span class="p">.</span><span class="nx">PathOption</span><span class="p">)</span> <span class="p">(</span><span class="nx">Selector</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">parsedSelector</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">parse</span><span class="p">(</span><span class="nx">selector</span><span class="p">,</span> <span class="nx">field</span><span class="p">.</span><span class="nf">ToPath</span><span class="p">(</span><span class="nx">opts</span><span class="o">...</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// ...省略
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">parse</span><span class="p">(</span><span class="nx">selector</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">path</span> <span class="o">*</span><span class="nx">field</span><span class="p">.</span><span class="nx">Path</span><span class="p">)</span> <span class="p">(</span><span class="nx">internalSelector</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">p</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Parser</span><span class="p">{</span><span class="nx">l</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">Lexer</span><span class="p">{</span><span class="nx">s</span><span class="p">:</span> <span class="nx">selector</span><span class="p">,</span> <span class="nx">pos</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span> <span class="nx">path</span><span class="p">:</span> <span class="nx">path</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">items</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">parse</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>那么主要就看一下Parser.parse()做了什么</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Parser</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">l</span>            <span class="o">*</span><span class="nx">Lexer</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">scannedItems</span> <span class="p">[]</span><span class="nx">ScannedItem</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">position</span>     <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">path</span>         <span class="o">*</span><span class="nx">field</span><span class="p">.</span><span class="nx">Path</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Parser</span><span class="p">)</span> <span class="nf">parse</span><span class="p">()</span> <span class="p">(</span><span class="nx">internalSelector</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">p</span><span class="p">.</span><span class="nf">scan</span><span class="p">()</span> <span class="c1">// init scannedItems
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// ...省略
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><p>scan()方法将输入的字符串，解析成一个个scanItems[]。</p>
+<p>大体思路是通过一个游标pos，读取String的每一个Byte并存入buffer，如果遇到特殊字符，则说明刚刚读取的是一个Key或者Value。</p>
+<p>读取特殊字符，则是使用了另一个方法scanSpecialSymbol()，大体思路如此，不再说明。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// 扫描特殊符号in,not exists或者是key和value
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">Lexer</span><span class="p">)</span> <span class="nf">scanIDOrKeyword</span><span class="p">()</span> <span class="p">(</span><span class="nx">tok</span> <span class="nx">Token</span><span class="p">,</span> <span class="nx">lit</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">buffer</span> <span class="p">[]</span><span class="kt">byte</span>
+</span></span><span class="line"><span class="cl"><span class="nx">IdentifierLoop</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">switch</span> <span class="nx">ch</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nf">read</span><span class="p">();</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">case</span> <span class="nx">ch</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">			<span class="k">break</span> <span class="nx">IdentifierLoop</span>
+</span></span><span class="line"><span class="cl">		<span class="k">case</span> <span class="nf">isSpecialSymbol</span><span class="p">(</span><span class="nx">ch</span><span class="p">)</span> <span class="o">||</span> <span class="nf">isWhitespace</span><span class="p">(</span><span class="nx">ch</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">l</span><span class="p">.</span><span class="nf">unread</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">			<span class="k">break</span> <span class="nx">IdentifierLoop</span>
+</span></span><span class="line"><span class="cl">		<span class="k">default</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">buffer</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">buffer</span><span class="p">,</span> <span class="nx">ch</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span> <span class="o">:=</span> <span class="nb">string</span><span class="p">(</span><span class="nx">buffer</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">string2token</span><span class="p">[</span><span class="nx">s</span><span class="p">];</span> <span class="nx">ok</span> <span class="p">{</span> <span class="c1">// is a literal token?
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">return</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">s</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">IdentifierToken</span><span class="p">,</span> <span class="nx">s</span> <span class="c1">// otherwise is an identifier
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> <span class="c1">// 扫描&#39;=&#39;, &#39;!&#39;, &#39;(&#39;, &#39;)&#39;, &#39;,&#39;, &#39;&gt;&#39;, &#39;&lt;&#39;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">Lexer</span><span class="p">)</span> <span class="nf">scanSpecialSymbol</span><span class="p">()</span> <span class="p">(</span><span class="nx">Token</span><span class="p">,</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span><span class="o">...</span><span class="p">}</span>
+</span></span></code></pre></div><p>最终scanItem如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="p">[</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span><span class="nx">IdentifierToken</span> <span class="nx">x</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span><span class="nx">EqualsToken</span> <span class="p">=},</span>
+</span></span><span class="line"><span class="cl"> 	<span class="p">{</span><span class="nx">IdentifierToken</span> <span class="nx">y</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="p">]</span>
+</span></span></code></pre></div><p><img src="https://redis.fran6k.live:1181/i/2023/01/15/63c36c650f1e5.png" alt="image-20230115110047001"></p>
+<p>IdentifierToken用来标志Key和Value，EqualsToken标志等于号=。</p>
+<p>接下来通过for循环，开始构造Selector中的Requirement数组</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Parser</span><span class="p">)</span> <span class="nf">parse</span><span class="p">()</span> <span class="p">(</span><span class="nx">internalSelector</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">p</span><span class="p">.</span><span class="nf">scan</span><span class="p">()</span> <span class="c1">// init scannedItems
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">requirements</span> <span class="nx">internalSelector</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">tok</span><span class="p">,</span> <span class="nx">lit</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">lookahead</span><span class="p">(</span><span class="nx">Values</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">switch</span> <span class="nx">tok</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">case</span> <span class="nx">IdentifierToken</span><span class="p">,</span> <span class="nx">DoesNotExistToken</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">r</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">parseRequirement</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;unable to parse requirement: %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">requirements</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">requirements</span><span class="p">,</span> <span class="o">*</span><span class="nx">r</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">t</span><span class="p">,</span> <span class="nx">l</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">consume</span><span class="p">(</span><span class="nx">Values</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// ... 省略部份代码
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>     <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>这里通过parseRequirement()方法构造Requirement数组，具体思路是，先取Key，再取Op，再取Value，利用Parser.Position ++来当作游标。</p>
+<p>每一次从scanItem[]中取3个scanItem。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Parser</span><span class="p">)</span> <span class="nf">parseRequirement</span><span class="p">()</span> <span class="p">(</span><span class="o">*</span><span class="nx">Requirement</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl"> 	<span class="c1">// 先取key
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">key</span><span class="p">,</span> <span class="nx">operator</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">parseKeyAndInferOperator</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">//  再取op运算符
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">operator</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">parseOperator</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 最后取value
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kd">var</span> <span class="nx">values</span> <span class="nx">sets</span><span class="p">.</span><span class="nx">String</span>
+</span></span><span class="line"><span class="cl">	<span class="k">switch</span> <span class="nx">operator</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="nx">selection</span><span class="p">.</span><span class="nx">In</span><span class="p">,</span> <span class="nx">selection</span><span class="p">.</span><span class="nx">NotIn</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">values</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">parseValues</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="nx">selection</span><span class="p">.</span><span class="nx">Equals</span><span class="p">,</span> <span class="nx">selection</span><span class="p">.</span><span class="nx">DoubleEquals</span><span class="p">,</span> <span class="nx">selection</span><span class="p">.</span><span class="nx">NotEquals</span><span class="p">,</span> <span class="nx">selection</span><span class="p">.</span><span class="nx">GreaterThan</span><span class="p">,</span> <span class="nx">selection</span><span class="p">.</span><span class="nx">LessThan</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">values</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">p</span><span class="p">.</span><span class="nf">parseExactValue</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nf">NewRequirement</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">operator</span><span class="p">,</span> <span class="nx">values</span><span class="p">.</span><span class="nf">List</span><span class="p">(),</span> <span class="nx">field</span><span class="p">.</span><span class="nf">WithPath</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">path</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>最终得到一个Requirement数组，即Selector。</p>
+<h1 id="总结">总结</h1>
+<p>大体思路是，将输入的&quot;x=y,a=b&quot;依次遍历，遇到特殊符号就停一下，将已经遍历的Byte打上标签并储存成scanItem[]，之后再依次遍历scanItem[]，构造成Requirement[]，即Selector，方便之后匹配。存算分离，先存，再算，计算时根据不同的运算符，构造不同的Requirement。</p>
+<p>至此K8s中LabelSelector已经分析完毕，总体的代码设计可以概括为存算分离，分而治之最后得到结果。</p>
+
+
+<h3>这个系列的帖子</h3>
+<ul>
+  
+    <li><a href="/post/k8s%E6%BA%90%E7%A0%812-labelselector-parse/">K8s源码2-LabelSelector-Parse</a></li>
+  
+    <li><a href="/post/k8s%E6%BA%90%E7%A0%811-labelselector-selector/">K8s源码1-LabelSelector-Selector</a></li>
+  
+</ul>
+</div>
+    <div class="post__footer">
+      
+        <span><a class="category" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></span>
+
+
+      
+
+      
+    </div>
+
+    
+  </div>
+
+      </main>
+    </div><footer class="footer footer__base">
+  <ul class="footer__list">
+    <li class="footer__item">
+      &copy;
+      
+        2023
+      
+    </li>
+    
+      <li class="footer__item">
+        <a
+          class="link"
+          href="https://beian.miit.gov.cn/#/Integrated/index"
+          
+            target="_blank" rel="noopener noreferrer"
+          
+          title=""
+        >
+          晋ICP备20007820号-1
+        </a>
+      </li>
+    
+  </ul>
+</footer>
+  
+  <script
+    type="text/javascript"
+    src="/js/medium-zoom.min.1248fa75275e5ef0cbef27e8c1e27dc507c445ae3a2c7d2ed0be0809555dac64.js"
+    integrity="sha256-Ekj6dSdeXvDL7yfoweJ9xQfERa46LH0u0L4ICVVdrGQ="
+    crossorigin="anonymous"
+  ></script></body>
+</html>

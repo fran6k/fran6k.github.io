@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>生活 on fran6k</title>
+    <link>https://fran6k.live/categories/%E7%94%9F%E6%B4%BB/</link>
+    <description>Recent content in 生活 on fran6k</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Wed, 11 Jan 2023 23:47:41 +0800</lastBuildDate><atom:link href="https://fran6k.live/categories/%E7%94%9F%E6%B4%BB/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>2022这一年</title>
+      <link>https://fran6k.live/post/2022%E8%BF%99%E4%B8%80%E5%B9%B4/</link>
+      <pubDate>Wed, 11 Jan 2023 23:47:41 +0800</pubDate>
+      
+      <guid>https://fran6k.live/post/2022%E8%BF%99%E4%B8%80%E5%B9%B4/</guid>
+      
+        <description>&lt;p&gt;收获满满，占坑待填&lt;/p&gt;</description>
+      
+    </item>
+    
+    <item>
+      <title>2021这一年</title>
+      <link>https://fran6k.live/post/2021%E8%BF%99%E4%B8%80%E5%B9%B4/</link>
+      <pubDate>Thu, 30 Dec 2021 23:00:00 +0800</pubDate>
+      
+      <guid>https://fran6k.live/post/2021%E8%BF%99%E4%B8%80%E5%B9%B4/</guid>
+      
+        <description>&lt;p&gt;忙碌充实的一年&lt;/p&gt;</description>
+      
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html
+  dir="ltr"
+  lang="zh-cn"
+  data-theme=""
+  
+    class="html theme--light"
+  
+><head>
+  <title>
+    fran6k&#39;s blog
+        |
+        k8s源码1-LabelSelector-Selector
+      
+
+    
+
+  </title>
+
+  
+  <meta charset="utf-8" /><meta name="generator" content="Hugo 0.109.0"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="author" content="fran6k&#39;s blog" />
+  <meta
+    name="description"
+    content="学生｜后端｜云原生
+在这里分享一些技术沉淀
+"
+  />
+  
+  
+    
+    
+    <link
+      rel="stylesheet"
+      href="/scss/main.min.92de3cff13378c641d2cbb8405e2a828d852b25fc41fd4243cea506abb34db6c.css"
+      integrity="sha256-kt48/xM3jGQdLLuEBeKoKNhSsl/EH9QkPOpQars022w="
+      crossorigin="anonymous"
+      type="text/css"
+    />
+  
+
+  
+  <link
+    rel="stylesheet"
+    href="/css/markupHighlight.min.2d1384e713286a803f77dd52bedaf63bc9a1428da2f19b58559e17412f43bdac.css"
+    integrity="sha256-LROE5xMoaoA/d91Svtr2O8mhQo2i8ZtYVZ4XQS9Dvaw="
+    crossorigin="anonymous"
+    type="text/css"
+  />
+  
+    
+    
+    <link
+      rel="stylesheet"
+      href="/css/syntax.min.7ac04f67eca661571e942c0456c2b00f691243597031edab6852106211ba1dd2.css"
+      integrity="sha256-esBPZ&#43;ymYVcelCwEVsKwD2kSQ1lwMe2raFIQYhG6HdI="
+      crossorigin="anonymous"
+      media="screen"
+    />
+  
+    
+    
+    <link
+      rel="stylesheet"
+      href="/css/font.min.a95b4e5e61f0a7de6467fcc23cb70b4d8ec5a888e31f4471b960baaa912e9540.css"
+      integrity="sha256-qVtOXmHwp95kZ/zCPLcLTY7FqIjjH0RxuWC6qpEulUA="
+      crossorigin="anonymous"
+      media="screen"
+    />
+  
+  
+  <link
+    rel="stylesheet"
+    href="/fontawesome/css/fontawesome.min.7d272de35b410fb165377550cdf9c4d3a80fbbcc961e111914e4d5c0eaf5729f.css"
+    integrity="sha256-fSct41tBD7FlN3VQzfnE06gPu8yWHhEZFOTVwOr1cp8="
+    crossorigin="anonymous"
+    type="text/css"
+  />
+  
+  <link
+    rel="stylesheet"
+    href="/fontawesome/css/solid.min.55d8333481b07a08e07cf6f37319753a2b47e99f4c395394c5747b48b495aa9b.css"
+    integrity="sha256-VdgzNIGwegjgfPbzcxl1OitH6Z9MOVOUxXR7SLSVqps="
+    crossorigin="anonymous"
+    type="text/css"
+  />
+  
+  <link
+    rel="stylesheet"
+    href="/fontawesome/css/regular.min.a7448d02590b43449364b6b5922ed9af5410abb4de4238412a830316dedb850b.css"
+    integrity="sha256-p0SNAlkLQ0STZLa1ki7Zr1QQq7TeQjhBKoMDFt7bhQs="
+    crossorigin="anonymous"
+    type="text/css"
+  />
+  
+  <link
+    rel="stylesheet"
+    href="/fontawesome/css/brands.min.9ed75a5d670c953fe4df935937674b4646f92674367e9e66eb995bb04e821647.css"
+    integrity="sha256-ntdaXWcMlT/k35NZN2dLRkb5JnQ2fp5m65lbsE6CFkc="
+    crossorigin="anonymous"
+    type="text/css"
+  />
+  
+  <link rel="shortcut icon" href="/favicons/favicon.ico" type="image/x-icon" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png" />
+
+  <link rel="canonical" href="https://fran6k.live/post/k8s%E6%BA%90%E7%A0%811-labelselector-selector/" />
+
+  
+  
+  
+  
+  <script
+    type="text/javascript"
+    src="/js/anatole-header.min.f9132794301a01ff16550ed66763482bd848f62243d278f5e550229a158bfd32.js"
+    integrity="sha256-&#43;RMnlDAaAf8WVQ7WZ2NIK9hI9iJD0nj15VAimhWL/TI="
+    crossorigin="anonymous"
+  ></script>
+
+  
+    
+    
+    <script
+      type="text/javascript"
+      src="/js/anatole-theme-switcher.min.d6d329d93844b162e8bed1e915619625ca91687952177552b9b3e211014a2957.js"
+      integrity="sha256-1tMp2ThEsWLovtHpFWGWJcqRaHlSF3VSubPiEQFKKVc="
+      crossorigin="anonymous"
+    ></script>
+  
+
+  
+
+
+  
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="k8s源码1-LabelSelector-Selector"/>
+<meta name="twitter:description" content="打算做一个k8s源码阅读系列。k8s在云原生领域一骑绝尘，也有很多专业人士发表了k8s源码剖析相关的文章，所以此系列文章仅仅记录个人学习与收获。"/>
+
+
+
+  
+  <meta property="og:title" content="k8s源码1-LabelSelector-Selector" />
+<meta property="og:description" content="打算做一个k8s源码阅读系列。k8s在云原生领域一骑绝尘，也有很多专业人士发表了k8s源码剖析相关的文章，所以此系列文章仅仅记录个人学习与收获。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fran6k.live/post/k8s%E6%BA%90%E7%A0%811-labelselector-selector/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-01-13T22:21:00+08:00" />
+<meta property="article:modified_time" content="2023-01-13T22:21:00+08:00" /><meta property="og:site_name" content="fran6k" />
+
+
+
+
+
+  
+  
+  
+  
+  <script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "articleSection": "post",
+        "name": "k8s源码1-LabelSelector-Selector",
+        "headline": "k8s源码1-LabelSelector-Selector",
+        "alternativeHeadline": "",
+        "description": "
+      
+        \u003cp\u003e打算做一个k8s源码阅读系列。k8s在云原生领域一骑绝尘，也有很多专业人士发表了k8s源码剖析相关的文章，所以此系列文章仅仅记录个人学习与收获。\u003c\/p\u003e
+
+
+      
+
+
+    ",
+        "inLanguage": "zh-cn",
+        "isFamilyFriendly": "true",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/fran6k.live\/post\/k8s%E6%BA%90%E7%A0%811-labelselector-selector\/"
+        },
+        "author" : {
+            "@type": "Person",
+            "name": "fran6k\u0027s blog"
+        },
+        "creator" : {
+            "@type": "Person",
+            "name": "fran6k\u0027s blog"
+        },
+        "accountablePerson" : {
+            "@type": "Person",
+            "name": "fran6k\u0027s blog"
+        },
+        "copyrightHolder" : {
+            "@type": "Person",
+            "name": "fran6k\u0027s blog"
+        },
+        "copyrightYear" : "2023",
+        "dateCreated": "2023-01-13T22:21:00.00Z",
+        "datePublished": "2023-01-13T22:21:00.00Z",
+        "dateModified": "2023-01-13T22:21:00.00Z",
+        "publisher":{
+            "@type":"Organization",
+            "name": "fran6k's blog",
+            "url": "https://fran6k.live",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/fran6k.live\/favicons\/favicon-32x32.png",
+                "width":"32",
+                "height":"32"
+            }
+        },
+        "image": 
+      [
+      ]
+
+    ,
+        "url" : "https:\/\/fran6k.live\/post\/k8s%E6%BA%90%E7%A0%811-labelselector-selector\/",
+        "wordCount" : "267",
+        "genre" : [ 
+      
+      "技术"
+
+    ],
+        "keywords" : [ ]
+    }
+  </script>
+
+
+</head>
+<body class="body">
+    <div class="wrapper">
+      <aside
+        
+          class="wrapper__sidebar"
+        
+      ><div
+  class="sidebar
+    animated fadeInDown
+  "
+>
+  <div class="sidebar__content">
+    <div class="sidebar__introduction">
+      <img
+        class="sidebar__introduction-profileimage"
+        src="/images/avatar2.png"
+        alt="profile picture"
+      />
+      
+        <div class="sidebar__introduction-title">
+          <a href="/">fran6k</a>
+        </div>
+      
+      <div class="sidebar__introduction-description">
+        <p>学生｜后端｜云原生<br />在这里分享一些技术沉淀<br /></p>
+      </div>
+    </div>
+    <ul class="sidebar__list">
+      
+    </ul>
+  </div><footer class="footer footer__sidebar">
+  <ul class="footer__list">
+    <li class="footer__item">
+      &copy;
+      
+        2023
+      
+    </li>
+    
+      <li class="footer__item">
+        <a
+          class="link"
+          href="https://beian.miit.gov.cn/#/Integrated/index"
+          
+            target="_blank" rel="noopener noreferrer"
+          
+          title=""
+        >
+          晋ICP备20007820号-1
+        </a>
+      </li>
+    
+  </ul>
+</footer>
+  
+  <script
+    type="text/javascript"
+    src="/js/medium-zoom.min.1248fa75275e5ef0cbef27e8c1e27dc507c445ae3a2c7d2ed0be0809555dac64.js"
+    integrity="sha256-Ekj6dSdeXvDL7yfoweJ9xQfERa46LH0u0L4ICVVdrGQ="
+    crossorigin="anonymous"
+  ></script></div>
+</aside>
+      <main
+        
+          class="wrapper__main"
+        
+      >
+        <header class="header"><div
+  class="
+    animated fadeInDown
+  "
+>
+  <a role="button" class="navbar-burger" data-target="navMenu" aria-label="menu" aria-expanded="false">
+    <span aria-hidden="true" class="navbar-burger__line"></span>
+    <span aria-hidden="true" class="navbar-burger__line"></span>
+    <span aria-hidden="true" class="navbar-burger__line"></span>
+  </a>
+  <nav class="nav">
+    <ul class="nav__list" id="navMenu">
+      
+      
+        
+        
+          <li class="nav__list-item">
+            <a
+              
+              href="/"
+              
+              title=""
+              >主页</a
+            >
+          </li>
+        
+
+      
+        
+        
+          <li class="nav__list-item">
+            <a
+              
+              href="/post/"
+              
+              title=""
+              >文章</a
+            >
+          </li>
+        
+
+      
+        
+        
+          <li class="nav__list-item">
+            <a
+              
+              href="/about/"
+              
+              title=""
+              >关于</a
+            >
+          </li>
+        
+
+      
+        
+        
+          <li class="nav__list-item">
+            <a
+              
+              href="/friend-link/"
+              
+              title=""
+              >友情链接</a
+            >
+          </li>
+        
+
+      
+    </ul>
+    <ul class="nav__list nav__list--end">
+      
+      
+        <li class="nav__list-item">
+          <div class="themeswitch">
+            <a title="Switch Theme">
+              <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a>
+          </div>
+        </li>
+      
+    </ul>
+  </nav>
+</div>
+</header>
+  <div
+    class="post 
+      animated fadeInDown
+    "
+  >
+    
+    <div class="post__content">
+      <h1>K8s源码1-LabelSelector-Selector</h1>
+      
+        <ul class="post__meta">
+          <li class="post__meta-item">
+            <em class="fas fa-calendar-day post__meta-icon"></em>
+            <span class="post__meta-text"
+              >
+                
+                  2023年1月13日 22:21
+                
+
+              
+            </span>
+          </li>
+          <li class="post__meta-item">
+            <em class="fas fa-stopwatch post__meta-icon"></em>
+            <span class="post__meta-text">阅读时间 2 分钟</span>
+          </li>
+        </ul>
+      <p>打算做一个k8s源码阅读系列。k8s在云原生领域一骑绝尘，也有很多专业人士发表了k8s源码剖析相关的文章，所以此系列文章仅仅记录个人学习与收获。</p>
+<p>起因是最近做的项目中，自己的工程能力以及架构能力进入了一个瓶颈期，因此打算通过阅读优秀的项目代码，来拓展一下视野。</p>
+<p>官方文档介绍：</p>
+<blockquote>
+<p><strong>标签（Labels）</strong> 是附加到 Kubernetes 对象（比如 Pod）上的键值对。 标签旨在用于指定对用户有意义且相关的对象的标识属性，但不直接对核心系统有语义含义。 标签可以用于组织和选择对象的子集。标签可以在创建时附加到对象，随后可以随时添加和修改。 每个对象都可以定义一组键/值标签。每个键对于给定对象必须是唯一的。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="s2">&#34;labels&#34;</span><span class="err">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">   <span class="nt">&#34;key1&#34;</span> <span class="p">:</span> <span class="s2">&#34;value1&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;key2&#34;</span> <span class="p">:</span> <span class="s2">&#34;value2&#34;</span>
+</span></span><span class="line"><span class="cl">   <span class="p">}</span>
+</span></span></code></pre></div></blockquote>
+<p>接下来将简单分析一下k8s如何进行label match，以下代码基于releases v1.26.0</p>
+<p>label selector位于k8s.io/apimachinery/label中，apimachinery包中对模式，类型，解码，编码和转换的一些工具进行了封装。</p>
+<img src="https://redis.fran6k.live:1181/i/2023/01/14/63c278fa7e21f.png" alt="image-20230114173035272" style="zoom:33%;" />
+<h1 id="使用方法">使用方法</h1>
+<p>label selector使用方法如下</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// test文件中调用方法，给一个Set x:y和现有的标签&#34;x=y&#34;进行匹配，显然可以看出，匹配成功
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">expectMatch</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="s">&#34;x=y&#34;</span><span class="p">,</span> <span class="nx">Set</span><span class="p">{</span><span class="s">&#34;x&#34;</span><span class="p">:</span> <span class="s">&#34;y&#34;</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// ls Set是匹配目标，selector是现有标签
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">expectMatch</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">,</span> <span class="nx">selector</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">ls</span> <span class="nx">Set</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 这里将selector x=y解析成Selector，解析Parse的实现在下一篇文章讲，Selector会在后文讲。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">lq</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">Parse</span><span class="p">(</span><span class="nx">selector</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">t</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Unable to parse %v as a selector\n&#34;</span><span class="p">,</span> <span class="nx">selector</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// Selector有一个方法matches，进行匹配
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="p">!</span><span class="nx">lq</span><span class="p">.</span><span class="nf">Matches</span><span class="p">(</span><span class="nx">ls</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">t</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;Wanted %s to match &#39;%s&#39;, but it did not.\n&#34;</span><span class="p">,</span> <span class="nx">selector</span><span class="p">,</span> <span class="nx">ls</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h1 id="源码分析">源码分析</h1>
+<p>labels.go文件，这里定义了一个labels接口和Set map。Set实现了Labels接口。比较简单，之后selector会用到这个结构。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// labels.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// Labels allows you to present labels independently from their storage.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Labels</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">Has</span><span class="p">(</span><span class="nx">label</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">exists</span> <span class="kt">bool</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nf">Get</span><span class="p">(</span><span class="nx">label</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">value</span> <span class="kt">string</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Set</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// .. 省略Set的接口实现
+</span></span></span></code></pre></div><p>selector.go文件，定义了Selector接口，Selector用来进行label的匹配。其中比较重要的是Matches方法。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// selector.go
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Selector represents a label selector.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Selector</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">Matches</span><span class="p">(</span><span class="nx">Labels</span><span class="p">)</span> <span class="kt">bool</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nf">Empty</span><span class="p">()</span> <span class="kt">bool</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nf">String</span><span class="p">()</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nf">Add</span><span class="p">(</span><span class="nx">r</span> <span class="o">...</span><span class="nx">Requirement</span><span class="p">)</span> <span class="nx">Selector</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// ... 省略了一些方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><p>接下来是重点，internalSelector 实现了Selector接口，是一个Requirement数组。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// selector.go
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// Requirement是对标签匹配的一个抽象。在internalSelector进行匹配的时候，会遍历所有的Requirement，将目标label和每一个Requirement进行Match匹配。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Requirement</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 键
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">key</span>      <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl"> 	<span class="c1">// == != exists等运算符
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">operator</span> <span class="nx">selection</span><span class="p">.</span><span class="nx">Operator</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">strValues</span> <span class="p">[]</span><span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// internalSelector是默认的Selector，实现and运算，即要满足每一个Reqirement的匹配。有一个匹配失败，则整体匹配失败。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">internalSelector</span> <span class="p">[]</span><span class="nx">Requirement</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="nx">internalSelector</span><span class="p">)</span> <span class="nf">Matches</span><span class="p">(</span><span class="nx">l</span> <span class="nx">Labels</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">ix</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">s</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">matches</span> <span class="o">:=</span> <span class="nx">s</span><span class="p">[</span><span class="nx">ix</span><span class="p">].</span><span class="nf">Matches</span><span class="p">(</span><span class="nx">l</span><span class="p">);</span> <span class="p">!</span><span class="nx">matches</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewSelector</span><span class="p">()</span> <span class="nx">Selector</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nf">internalSelector</span><span class="p">(</span><span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>internalSelector的Matches方法调用了每一个Requirement的Matches，将给定的key value对和现有的key value（Requirement）进行匹配。</p>
+<p>那么Requirement如何进行Match的呢？这里也比较简单</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// 这里根据每一种运算类型，分别进行匹配，调用了Labels的has方法，Labels接口在上文有提到。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Requirement</span><span class="p">)</span> <span class="nf">Matches</span><span class="p">(</span><span class="nx">ls</span> <span class="nx">Labels</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">switch</span> <span class="nx">r</span><span class="p">.</span><span class="nx">operator</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="nx">selection</span><span class="p">.</span><span class="nx">In</span><span class="p">,</span> <span class="nx">selection</span><span class="p">.</span><span class="nx">Equals</span><span class="p">,</span> <span class="nx">selection</span><span class="p">.</span><span class="nx">DoubleEquals</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">!</span><span class="nx">ls</span><span class="p">.</span><span class="nf">Has</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">r</span><span class="p">.</span><span class="nf">hasValue</span><span class="p">(</span><span class="nx">ls</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">key</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="nx">selection</span><span class="p">.</span><span class="nx">NotIn</span><span class="p">,</span> <span class="nx">selection</span><span class="p">.</span><span class="nx">NotEquals</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">!</span><span class="nx">ls</span><span class="p">.</span><span class="nf">Has</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="p">!</span><span class="nx">r</span><span class="p">.</span><span class="nf">hasValue</span><span class="p">(</span><span class="nx">ls</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">key</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="nx">selection</span><span class="p">.</span><span class="nx">Exists</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">ls</span><span class="p">.</span><span class="nf">Has</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// ... 省略一些case
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    
+</span></span><span class="line"><span class="cl">	<span class="k">default</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>现在进行匹配的逻辑已经清楚了，接下来要解决的是如何将给定的Label解析成Requirement，“喂”给Selector，下一篇文章进行分析。</p>
+<h1 id="总结">总结</h1>
+<p>结合实际总结一下，在应用中，每个Pod等资源都有自己的LabelSelector，当通过Api Server进行筛选标签查询时，Selector的Requirement就是Pod已有的Labels，通过Selector.Matches()方法将Selector的每一个Labels（抽象为Requirement）和给定的Labels进行匹配。</p>
+<p>在代码编写的时候，当有一些业务由许多个同类项组成时，可以将每一个同类项进行抽象封装，分而治之，由“不稳定”的输入，到“稳定”的输出。</p>
+<p>k8s早期源码中selector的实现采用了类递归的方式，不方便理解，但大体思路上也是如此。</p>
+
+
+<h3>这个系列的帖子</h3>
+<ul>
+  
+    <li><a href="/post/k8s%E6%BA%90%E7%A0%812-labelselector-parse/">K8s源码2-LabelSelector-Parse</a></li>
+  
+    <li><a href="/post/k8s%E6%BA%90%E7%A0%811-labelselector-selector/">K8s源码1-LabelSelector-Selector</a></li>
+  
+</ul>
+</div>
+    <div class="post__footer">
+      
+        <span><a class="category" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></span>
+
+
+      
+
+      
+    </div>
+
+    
+  </div>
+
+      </main>
+    </div><footer class="footer footer__base">
+  <ul class="footer__list">
+    <li class="footer__item">
+      &copy;
+      
+        2023
+      
+    </li>
+    
+      <li class="footer__item">
+        <a
+          class="link"
+          href="https://beian.miit.gov.cn/#/Integrated/index"
+          
+            target="_blank" rel="noopener noreferrer"
+          
+          title=""
+        >
+          晋ICP备20007820号-1
+        </a>
+      </li>
+    
+  </ul>
+</footer>
+  
+  <script
+    type="text/javascript"
+    src="/js/medium-zoom.min.1248fa75275e5ef0cbef27e8c1e27dc507c445ae3a2c7d2ed0be0809555dac64.js"
+    integrity="sha256-Ekj6dSdeXvDL7yfoweJ9xQfERa46LH0u0L4ICVVdrGQ="
+    crossorigin="anonymous"
+  ></script></body>
+</html>
