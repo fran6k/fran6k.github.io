@@ -6,7 +6,62 @@
     <description>Recent content on fran6k</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 14 Jan 2023 20:13:00 +0800</lastBuildDate><atom:link href="https://fran6k.live/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 02 Feb 2023 18:00:00 +0800</lastBuildDate><atom:link href="https://fran6k.live/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>unity protobuf安装问题</title>
+      <link>https://fran6k.live/post/%E8%AE%B0%E4%B8%80%E6%AC%A1unity-protobuf%E5%AE%89%E8%A3%85%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Thu, 02 Feb 2023 18:00:00 +0800</pubDate>
+      
+      <guid>https://fran6k.live/post/%E8%AE%B0%E4%B8%80%E6%AC%A1unity-protobuf%E5%AE%89%E8%A3%85%E9%97%AE%E9%A2%98/</guid>
+      
+        <description></description>
+      
+    </item>
+    
+    <item>
+      <title>k8s源码3-kubeproxy以及令牌桶</title>
+      <link>https://fran6k.live/post/k8s%E6%BA%90%E7%A0%813-kubeproxy-1/</link>
+      <pubDate>Wed, 18 Jan 2023 20:04:00 +0800</pubDate>
+      
+      <guid>https://fran6k.live/post/k8s%E6%BA%90%E7%A0%813-kubeproxy-1/</guid>
+      
+        <description></description>
+      
+    </item>
+    
+    <item>
+      <title>设计模式3-结构型模式</title>
+      <link>https://fran6k.live/post/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F3-%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Tue, 17 Jan 2023 22:05:00 +0800</pubDate>
+      
+      <guid>https://fran6k.live/post/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F3-%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/</guid>
+      
+        <description></description>
+      
+    </item>
+    
+    <item>
+      <title>设计模式2-创造型模式及应用</title>
+      <link>https://fran6k.live/post/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F2-%E5%88%9B%E9%80%A0%E5%9E%8B%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Mon, 16 Jan 2023 19:50:00 +0800</pubDate>
+      
+      <guid>https://fran6k.live/post/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F2-%E5%88%9B%E9%80%A0%E5%9E%8B%E6%A8%A1%E5%BC%8F/</guid>
+      
+        <description></description>
+      
+    </item>
+    
+    <item>
+      <title>设计模式1-设计原则</title>
+      <link>https://fran6k.live/post/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F1-%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/</link>
+      <pubDate>Mon, 16 Jan 2023 18:03:00 +0800</pubDate>
+      
+      <guid>https://fran6k.live/post/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F1-%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/</guid>
+      
+        <description>&lt;p&gt;Go实现&lt;/p&gt;</description>
+      
+    </item>
+    
     <item>
       <title>k8s源码2-LabelSelector-Parse</title>
       <link>https://fran6k.live/post/k8s%E6%BA%90%E7%A0%812-labelselector-parse/</link>
@@ -70,14 +125,8 @@
       <guid>https://fran6k.live/about/</guid>
       
         <description>简介 hi，大学期间从事web开发，包括前端以及后端。
-2022年上半年在腾讯实习，负责开发压测平台，因此也接触了K8s。后来因为公司缩编，组内没有名额，顾回校考研。
-目前主要方向是后端，云原生相关。
-很幸运自己感兴趣的行业工资高，可以养活自己。但没想到“寒冬”来的这么突然。
-读书读的太少，又想的太多，偶尔会焦虑，不知道未来要做什么。
-所以打算晚一些再入行，多沉淀几年。
-曾经跟朋友讨论过一个很现实的问题，努力提高技术有什么用？还不是为了找工作，赚更多的钱。
-某种角度来说确实如此，但不应该只有这样。
-要找到自己喜欢的东西，并且持之以恒地坚持下去。</description>
+2022年上半年在腾讯实习，负责开发压测平台，因此也接触了K8s，方向是后端，云原生相关。
+2024年进入深大VCC攻读硕士研究生，从事计算机图形学相关研究。</description>
       
     </item>
     

@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html
+  dir="ltr"
+  lang="zh-cn"
+  data-theme=""
+  
+    class="html theme--light"
+  
+><head>
+  <title>
+    fran6k&#39;s blog
+        |
+        设计模式3-结构型模式
+      
+
+    
+
+  </title>
+
+  
+  <meta charset="utf-8" /><meta name="generator" content="Hugo 0.111.3"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="author" content="fran6k&#39;s blog" />
+  <meta
+    name="description"
+    content="学生｜后端｜云原生
+在这里分享一些技术沉淀
+"
+  />
+  
+  
+    
+    
+    <link
+      rel="stylesheet"
+      href="/scss/main.min.853b40b40e3fdc2dc45fd58ccdf26cd746d2309db1b3f58856564adfb34ecae5.css"
+      integrity="sha256-hTtAtA4/3C3EX9WMzfJs10bSMJ2xs/WIVlZK37NOyuU="
+      crossorigin="anonymous"
+      type="text/css"
+    />
+  
+
+  
+  <link
+    rel="stylesheet"
+    href="/css/markupHighlight.min.2d1384e713286a803f77dd52bedaf63bc9a1428da2f19b58559e17412f43bdac.css"
+    integrity="sha256-LROE5xMoaoA/d91Svtr2O8mhQo2i8ZtYVZ4XQS9Dvaw="
+    crossorigin="anonymous"
+    type="text/css"
+  />
+  
+    
+    
+    <link
+      rel="stylesheet"
+      href="/css/syntax.min.7ac04f67eca661571e942c0456c2b00f691243597031edab6852106211ba1dd2.css"
+      integrity="sha256-esBPZ&#43;ymYVcelCwEVsKwD2kSQ1lwMe2raFIQYhG6HdI="
+      crossorigin="anonymous"
+      media="screen"
+    />
+  
+    
+    
+    <link
+      rel="stylesheet"
+      href="/css/font.min.c452ee21b0b6ea266bb9ade155d178350f351bf4e85a00363a3c30a1aeae6b07.css"
+      integrity="sha256-xFLuIbC26iZrua3hVdF4NQ81G/ToWgA2Ojwwoa6uawc="
+      crossorigin="anonymous"
+      media="screen"
+    />
+  
+  
+  <link
+    rel="stylesheet"
+    href="/fontawesome/css/fontawesome.min.7d272de35b410fb165377550cdf9c4d3a80fbbcc961e111914e4d5c0eaf5729f.css"
+    integrity="sha256-fSct41tBD7FlN3VQzfnE06gPu8yWHhEZFOTVwOr1cp8="
+    crossorigin="anonymous"
+    type="text/css"
+  />
+  
+  <link
+    rel="stylesheet"
+    href="/fontawesome/css/solid.min.55d8333481b07a08e07cf6f37319753a2b47e99f4c395394c5747b48b495aa9b.css"
+    integrity="sha256-VdgzNIGwegjgfPbzcxl1OitH6Z9MOVOUxXR7SLSVqps="
+    crossorigin="anonymous"
+    type="text/css"
+  />
+  
+  <link
+    rel="stylesheet"
+    href="/fontawesome/css/regular.min.a7448d02590b43449364b6b5922ed9af5410abb4de4238412a830316dedb850b.css"
+    integrity="sha256-p0SNAlkLQ0STZLa1ki7Zr1QQq7TeQjhBKoMDFt7bhQs="
+    crossorigin="anonymous"
+    type="text/css"
+  />
+  
+  <link
+    rel="stylesheet"
+    href="/fontawesome/css/brands.min.9ed75a5d670c953fe4df935937674b4646f92674367e9e66eb995bb04e821647.css"
+    integrity="sha256-ntdaXWcMlT/k35NZN2dLRkb5JnQ2fp5m65lbsE6CFkc="
+    crossorigin="anonymous"
+    type="text/css"
+  />
+  
+  <link rel="shortcut icon" href="/favicons/favicon.ico" type="image/x-icon" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png" />
+
+  <link rel="canonical" href="https://fran6k.live/post/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F3-%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/" />
+
+  
+  
+  
+  
+  <script
+    type="text/javascript"
+    src="/js/anatole-header.min.ec8addde0700c05e25920a03b8118ffc37f3532a355915aa087628fe3a421b2e.js"
+    integrity="sha256-7Ird3gcAwF4lkgoDuBGP/DfzUyo1WRWqCHYo/jpCGy4="
+    crossorigin="anonymous"
+  ></script>
+
+  
+    
+    
+    <script
+      type="text/javascript"
+      src="/js/anatole-theme-switcher.min.d6d329d93844b162e8bed1e915619625ca91687952177552b9b3e211014a2957.js"
+      integrity="sha256-1tMp2ThEsWLovtHpFWGWJcqRaHlSF3VSubPiEQFKKVc="
+      crossorigin="anonymous"
+    ></script>
+  
+
+  
+
+
+  
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="设计模式3-结构型模式"/>
+<meta name="twitter:description" content=""/>
+
+
+
+  
+  <meta property="og:title" content="设计模式3-结构型模式" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fran6k.live/post/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F3-%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-01-17T22:05:00+08:00" />
+<meta property="article:modified_time" content="2023-01-17T22:05:00+08:00" /><meta property="og:site_name" content="fran6k" />
+
+
+
+
+
+  
+  
+  
+  
+  <script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "articleSection": "post",
+        "name": "设计模式3-结构型模式",
+        "headline": "设计模式3-结构型模式",
+        "alternativeHeadline": "",
+        "description": "
+      
+        
+
+
+      
+
+
+    ",
+        "inLanguage": "zh-cn",
+        "isFamilyFriendly": "true",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/fran6k.live\/post\/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F3-%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F\/"
+        },
+        "author" : {
+            "@type": "Person",
+            "name": "fran6k\u0027s blog"
+        },
+        "creator" : {
+            "@type": "Person",
+            "name": "fran6k\u0027s blog"
+        },
+        "accountablePerson" : {
+            "@type": "Person",
+            "name": "fran6k\u0027s blog"
+        },
+        "copyrightHolder" : {
+            "@type": "Person",
+            "name": "fran6k\u0027s blog"
+        },
+        "copyrightYear" : "2023",
+        "dateCreated": "2023-01-17T22:05:00.00Z",
+        "datePublished": "2023-01-17T22:05:00.00Z",
+        "dateModified": "2023-01-17T22:05:00.00Z",
+        "publisher":{
+            "@type":"Organization",
+            "name": "fran6k's blog",
+            "url": "https://fran6k.live",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/fran6k.live\/favicons\/favicon-32x32.png",
+                "width":"32",
+                "height":"32"
+            }
+        },
+        "image": 
+      [
+      ]
+
+    ,
+        "url" : "https:\/\/fran6k.live\/post\/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F3-%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F\/",
+        "wordCount" : "473",
+        "genre" : [ 
+      
+      "技术"
+
+    ],
+        "keywords" : [ ]
+    }
+  </script>
+
+
+</head>
+<body class="body">
+    <div class="wrapper">
+
+
+
+
+
+
+
+
+        
+        <aside class="wrapper__sidebar"><div class="sidebar__toc">
+    <h3>目录</h3>
+
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#代理模式">代理模式</a></li>
+    <li><a href="#装饰器模式">装饰器模式</a></li>
+    <li><a href="#适配器模式">适配器模式</a></li>
+    <li><a href="#外观模式">外观模式</a></li>
+  </ul>
+</nav>
+
+
+</div></aside>
+        
+
+      <main
+        
+          class="wrapper__main sidebar__line"
+        
+      >
+        <header class="header"><div
+  class="
+    animated fadeInDown
+  "
+>
+  <a role="button" class="navbar-burger" data-target="navMenu" aria-label="menu" aria-expanded="false">
+    <span aria-hidden="true" class="navbar-burger__line"></span>
+    <span aria-hidden="true" class="navbar-burger__line"></span>
+    <span aria-hidden="true" class="navbar-burger__line"></span>
+  </a>
+  <nav class="nav">
+    <ul class="nav__list" id="navMenu">
+      
+      
+        
+        
+          <li class="nav__list-item">
+            <a
+              
+              href="/"
+              
+              title=""
+              >主页</a
+            >
+          </li>
+        
+
+      
+        
+        
+          <li class="nav__list-item">
+            <a
+              
+              href="/post/"
+              
+              title=""
+              >文章</a
+            >
+          </li>
+        
+
+      
+        
+        
+          <li class="nav__list-item">
+            <a
+              
+              href="/about/"
+              
+              title=""
+              >关于</a
+            >
+          </li>
+        
+
+      
+        
+        
+          <li class="nav__list-item">
+            <a
+              
+              href="/friend-link/"
+              
+              title=""
+              >友情链接</a
+            >
+          </li>
+        
+
+      
+    </ul>
+    <ul class="nav__list nav__list--end">
+      
+      
+        <li class="nav__list-item">
+          <div class="themeswitch">
+            <a title="Switch Theme">
+              <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a>
+          </div>
+        </li>
+      
+    </ul>
+  </nav>
+</div>
+</header>
+  <div
+    class="post 
+      animated fadeInDown
+    "
+  >
+    
+    <div class="post__content">
+      <h1>设计模式3-结构型模式</h1>
+      
+        <ul class="post__meta">
+          <li class="post__meta-item">
+            <em class="fas fa-calendar-day post__meta-icon"></em>
+            <span class="post__meta-text"
+              >
+                
+                  2023年1月17日 22:05
+                
+
+              
+            </span>
+          </li>
+          <li class="post__meta-item">
+            <em class="fas fa-stopwatch post__meta-icon"></em>
+            <span class="post__meta-text">阅读时间 3 分钟</span>
+          </li>
+        </ul>
+      
+
+
+
+
+      <table>
+<thead>
+<tr>
+<th style="text-align:center">模式名称</th>
+<th style="text-align:center">介绍</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">代理模式</td>
+<td style="text-align:center">为其他对象提供一种代理以控制对这个对象的访问。</td>
+</tr>
+<tr>
+<td style="text-align:center">装饰器模式</td>
+<td style="text-align:center">动态的给一个对象添加一些额外的职责。就增加功能来说，此模式比生成子类更为灵活。</td>
+</tr>
+<tr>
+<td style="text-align:center">适配器模式</td>
+<td style="text-align:center">将一个类的接口转换成客户希望的另外一个接口。使得原本由于接口不兼容而不能一起工作的那些类可以一起工作。</td>
+</tr>
+<tr>
+<td style="text-align:center">外观模式</td>
+<td style="text-align:center">为子系统中的一组接口提供一个一致的界面，此模式定义了一个高层接口，这个接口使得这一子系统更加容易使用。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="代理模式">代理模式</h2>
+<p>代理模式可以为其他对象提供一种代理，以控制这个对象的访问。</p>
+<p>所谓代理，是指具有与被代理对象相同的接口类，客户端必须通过代理与被代理的目标进行交互，代理在这个交互的过程中，进行某些额外的处理。</p>
+<p>比如说，一个普通的汉堡，直接吃则吃到的是普通的汉堡。但是如果利用代理，将这个普通的汉堡撒上辣椒粉，就可以得到一个香辣鸡腿堡。最后也吃到了一个香辣鸡腿堡。</p>
+<p><strong><img src="https://redis.fran6k.live:1181/i/2023/01/17/63c69086dbe75.png" alt="image-20230117201043264"></strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Goods</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Kind</span> <span class="kt">string</span>   <span class="c1">//商品种类
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">Fact</span> <span class="kt">bool</span>	  <span class="c1">//商品真伪
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// =========== 抽象层 ===========
+</span></span></span><span class="line"><span class="cl"><span class="c1">//抽象的购物主题Subject
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Shopping</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">Buy</span><span class="p">(</span><span class="nx">goods</span> <span class="o">*</span><span class="nx">Goods</span><span class="p">)</span> <span class="c1">//某任务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// =========== 实现层 ===========
+</span></span></span><span class="line"><span class="cl"><span class="c1">//具体的购物主题， 实现了shopping， 去韩国购物
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">KoreaShopping</span> <span class="kd">struct</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">ks</span> <span class="o">*</span><span class="nx">KoreaShopping</span><span class="p">)</span> <span class="nf">Buy</span><span class="p">(</span><span class="nx">goods</span> <span class="o">*</span><span class="nx">Goods</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;去韩国进行了购物, 买了 &#34;</span><span class="p">,</span> <span class="nx">goods</span><span class="p">.</span><span class="nx">Kind</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//具体的购物主题， 实现了shopping， 去美国购物
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">AmericanShopping</span> <span class="kd">struct</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">as</span> <span class="o">*</span><span class="nx">AmericanShopping</span><span class="p">)</span> <span class="nf">Buy</span><span class="p">(</span><span class="nx">goods</span> <span class="o">*</span><span class="nx">Goods</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;去美国进行了购物, 买了 &#34;</span><span class="p">,</span> <span class="nx">goods</span><span class="p">.</span><span class="nx">Kind</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//具体的购物主题， 实现了shopping， 去非洲购物
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">AfrikaShopping</span> <span class="kd">struct</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">as</span> <span class="o">*</span><span class="nx">AfrikaShopping</span><span class="p">)</span> <span class="nf">Buy</span><span class="p">(</span><span class="nx">goods</span> <span class="o">*</span><span class="nx">Goods</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;去非洲进行了购物, 买了 &#34;</span><span class="p">,</span> <span class="nx">goods</span><span class="p">.</span><span class="nx">Kind</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//海外的代理
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">OverseasProxy</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">shopping</span> <span class="nx">Shopping</span> <span class="c1">//代理某个主题，这里是抽象类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">op</span> <span class="o">*</span><span class="nx">OverseasProxy</span><span class="p">)</span> <span class="nf">Buy</span><span class="p">(</span><span class="nx">goods</span> <span class="o">*</span><span class="nx">Goods</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 1. 先验货
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="p">(</span><span class="nx">op</span><span class="p">.</span><span class="nf">distinguish</span><span class="p">(</span><span class="nx">goods</span><span class="p">)</span> <span class="o">==</span> <span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//2. 进行购买
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">op</span><span class="p">.</span><span class="nx">shopping</span><span class="p">.</span><span class="nf">Buy</span><span class="p">(</span><span class="nx">goods</span><span class="p">)</span> <span class="c1">//调用原被代理的具体主题任务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">//3 海关安检
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">op</span><span class="p">.</span><span class="nf">check</span><span class="p">(</span><span class="nx">goods</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//创建一个代理,并且配置关联被代理的主题
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">NewProxy</span><span class="p">(</span><span class="nx">shopping</span> <span class="nx">Shopping</span><span class="p">)</span> <span class="nx">Shopping</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="o">&amp;</span><span class="nx">OverseasProxy</span><span class="p">{</span><span class="nx">shopping</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//验货流程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">op</span> <span class="o">*</span><span class="nx">OverseasProxy</span><span class="p">)</span> <span class="nf">distinguish</span><span class="p">(</span><span class="nx">goods</span> <span class="o">*</span><span class="nx">Goods</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;对[&#34;</span><span class="p">,</span> <span class="nx">goods</span><span class="p">.</span><span class="nx">Kind</span><span class="p">,</span><span class="s">&#34;]进行了辨别真伪.&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="nx">goods</span><span class="p">.</span><span class="nx">Fact</span> <span class="o">==</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;发现假货&#34;</span><span class="p">,</span><span class="nx">goods</span><span class="p">.</span><span class="nx">Kind</span><span class="p">,</span><span class="s">&#34;, 不应该购买。&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">goods</span><span class="p">.</span><span class="nx">Fact</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//安检流程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">op</span> <span class="o">*</span><span class="nx">OverseasProxy</span><span class="p">)</span> <span class="nf">check</span><span class="p">(</span><span class="nx">goods</span> <span class="o">*</span><span class="nx">Goods</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;对[&#34;</span><span class="p">,</span><span class="nx">goods</span><span class="p">.</span><span class="nx">Kind</span><span class="p">,</span><span class="s">&#34;] 进行了海关检查， 成功的带回祖国&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">g1</span> <span class="o">:=</span> <span class="nx">Goods</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Kind</span><span class="p">:</span> <span class="s">&#34;韩国面膜&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Fact</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">g2</span> <span class="o">:=</span> <span class="nx">Goods</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Kind</span><span class="p">:</span> <span class="s">&#34;CET4证书&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Fact</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">//如果不使用代理来完成从韩国购买任务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kd">var</span> <span class="nx">shopping</span> <span class="nx">Shopping</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">shopping</span> <span class="p">=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">KoreaShopping</span><span class="p">)</span> <span class="c1">//具体的购买主题
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//1-先验货
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="nx">g1</span><span class="p">.</span><span class="nx">Fact</span> <span class="o">==</span> <span class="kc">true</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;对[&#34;</span><span class="p">,</span> <span class="nx">g1</span><span class="p">.</span><span class="nx">Kind</span><span class="p">,</span><span class="s">&#34;]进行了辨别真伪.&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//2-去韩国购买
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">shopping</span><span class="p">.</span><span class="nf">Buy</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">g1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//3-海关安检
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;对[&#34;</span><span class="p">,</span><span class="nx">g1</span><span class="p">.</span><span class="nx">Kind</span><span class="p">,</span><span class="s">&#34;] 进行了海关检查， 成功的带回祖国&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;---------------以下是 使用 代理模式-------&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">overseasProxy</span> <span class="nx">Shopping</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">overseasProxy</span> <span class="p">=</span> <span class="nf">NewProxy</span><span class="p">(</span><span class="nx">shopping</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">overseasProxy</span><span class="p">.</span><span class="nf">Buy</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">g1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">overseasProxy</span><span class="p">.</span><span class="nf">Buy</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">g2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>代理模式的核心要点为代理和原对象实现<strong>相同</strong>接口，但<strong>扩大</strong>了原对象的职能。</p>
+<h2 id="装饰器模式">装饰器模式</h2>
+<p>装饰器模式和代理模式很相似，都是给原有的类添加额外的功能。然而区别在于，装饰器模式的特点在于可以不断“迭代“。</p>
+<p>如下图所示，一个手机可以贴膜变成带膜的手机，也可以装壳变成带壳的手机，带壳的手机也可以贴膜变成带壳膜的手机。</p>
+<p><img src="https://redis.fran6k.live:1181/i/2023/01/17/63c6976b54791.png" alt="image-20230117204110642"></p>
+<p>Aceld的例子不是很直观，这里贴一个其他代码实现https://www.jianshu.com/p/f70f8b154be4</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// 计算器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Calculate</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">Cal</span><span class="p">()</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//创建一个基准struct，后面的装饰器给这个基准struct加功能
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">OriCalculate</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">num</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewOriCalculate</span><span class="p">(</span><span class="nx">num</span> <span class="kt">int</span><span class="p">)</span><span class="o">*</span><span class="nx">OriCalculate</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">OriCalculate</span><span class="p">{</span><span class="nx">num</span><span class="p">:</span><span class="nx">num</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">o</span> <span class="o">*</span><span class="nx">OriCalculate</span><span class="p">)</span><span class="nf">Cal</span><span class="p">()</span>  <span class="kt">int</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">o</span><span class="p">.</span><span class="nx">num</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//创建基于基准struct的乘法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">MutCalculate</span> <span class="kd">struct</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Calculate</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">num</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewMutCalculate</span><span class="p">(</span><span class="nx">C</span> <span class="nx">Calculate</span><span class="p">,</span><span class="nx">num</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="nx">MutCalculate</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">MutCalculate</span><span class="p">{</span><span class="nx">Calculate</span><span class="p">:</span><span class="nx">C</span><span class="p">,</span><span class="nx">num</span><span class="p">:</span><span class="nx">num</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">MutCalculate</span><span class="p">)</span> <span class="nf">Cal</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">m</span><span class="p">.</span><span class="nx">num</span><span class="o">*</span><span class="nx">m</span><span class="p">.</span><span class="nx">Calculate</span><span class="p">.</span><span class="nf">Cal</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//创建基于基准struct的加法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">AddCalculate</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Calculate</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">num</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewAddCalculate</span><span class="p">(</span><span class="nx">C</span> <span class="nx">Calculate</span><span class="p">,</span><span class="nx">num</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="nx">AddCalculate</span>  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">AddCalculate</span><span class="p">{</span><span class="nx">Calculate</span><span class="p">:</span><span class="nx">C</span><span class="p">,</span><span class="nx">num</span><span class="p">:</span><span class="nx">num</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <span class="o">*</span><span class="nx">AddCalculate</span><span class="p">)</span><span class="nf">Cal</span><span class="p">()</span><span class="kt">int</span>  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">a</span><span class="p">.</span><span class="nx">num</span><span class="o">+</span><span class="nx">a</span><span class="p">.</span><span class="nx">Calculate</span><span class="p">.</span><span class="nf">Cal</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 使用
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">ExampleDecorator</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">//o:=NewOriCalculate(1)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">//定义的时候，接口实现的是指针接收，所以用指针初始化
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  
+</span></span><span class="line"><span class="cl">    <span class="nx">o</span><span class="o">:=&amp;</span><span class="nx">OriCalculate</span><span class="p">{</span><span class="mi">1</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">m</span><span class="o">:=</span><span class="nx">MutCalculate</span><span class="p">{</span><span class="nx">o</span><span class="p">,</span><span class="mi">2</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">a</span><span class="o">:=</span><span class="nx">AddCalculate</span><span class="p">{</span><span class="nx">o</span><span class="p">,</span><span class="mi">3</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Oricalculate is %d \n MutCalculate is %d\n AddCalculate is %d \n&#34;</span><span class="p">,</span><span class="nx">o</span><span class="p">.</span><span class="nf">Cal</span><span class="p">(),</span><span class="nx">m</span><span class="p">.</span><span class="nf">Cal</span><span class="p">(),</span><span class="nx">a</span><span class="p">.</span><span class="nf">Cal</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Output: The output of
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// this example.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><p>通俗来讲，装饰器模式和代理模式最大的区别就在于，装饰器模式拥有一个<strong>迭代</strong>的特性，原类和装饰器都实现了同一个接口，那么每次这个“类”，被“装饰”后，他还是他自己（此处指拥有原本的方法），但是他成为了一个新的自己。在实际业务中，可以根据具体的业务需求来随意装饰。比代理模式更加灵活。</p>
+<h2 id="适配器模式">适配器模式</h2>
+<p>适配器模式较为简单，共有三个角色：适配目标，适配器，适配者</p>
+<img src="https://redis.fran6k.live:1181/i/2023/01/17/63c69ddb66b9e.png" alt="image-20230117210840196" style="zoom:50%;" />
+<p>如下图所示，HttpClient利用成员HttpRequest.DoHttp()发送请求，除此外HttpClient包含了url，host，port，body等参数信息。</p>
+<p>Http和RPC Adapter实现了HttpRequest接口。</p>
+<p>默认情况下，当HttpClient调用DoHttp()方法时，将调用初始化时传入的Http对象中的Do()方法。当使用适配器时，将调用适配器RPC Adapter中的Do()方法。适配器将根据HttpClient中的url，host，port，body等参数信息来构造RPC请求并发。</p>
+<p><img src="https://redis.fran6k.live:1181/i/2023/01/17/63c6a5882f06a.png" alt="image-20230117214119644"></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">HttpRequest</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">Do</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">HttpClient</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">H</span>    <span class="nx">HttpRequest</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Url</span>  <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Host</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">h</span> <span class="o">*</span><span class="nx">HttpClient</span><span class="p">)</span> <span class="nf">DoReq</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">h</span><span class="p">.</span><span class="nx">H</span><span class="p">.</span><span class="nf">Do</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewHttpClient</span><span class="p">(</span><span class="nx">req</span> <span class="nx">HttpRequest</span><span class="p">)</span> <span class="o">*</span><span class="nx">HttpClient</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="o">&amp;</span><span class="nx">HttpClient</span><span class="p">{</span><span class="nx">H</span><span class="p">:</span> <span class="nx">req</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 实现HttpRequest就恶口
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Http</span> <span class="kd">struct</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">h</span> <span class="o">*</span><span class="nx">Http</span><span class="p">)</span> <span class="nf">Do</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;发送http请求&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">RPCAdapter</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">R</span> <span class="o">*</span><span class="nx">RPC</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <span class="o">*</span><span class="nx">RPCAdapter</span><span class="p">)</span> <span class="nf">Do</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 做一些rpc适配
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// 发送rpc请求s
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">a</span><span class="p">.</span><span class="nx">R</span><span class="p">.</span><span class="nf">DoRPC</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewRPCAdapter</span><span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">RPC</span><span class="p">)</span> <span class="nx">HttpRequest</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="o">&amp;</span><span class="nx">RPCAdapter</span><span class="p">{</span><span class="nx">R</span><span class="p">:</span> <span class="nx">r</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">RPC</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">RPC</span><span class="p">)</span> <span class="nf">DoRPC</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;发送rpc请求&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// -----不使用适配器-----
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">http</span> <span class="o">:=</span> <span class="nf">NewHttpClient</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">Http</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">http</span><span class="p">.</span><span class="nf">DoReq</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// -----使用适配器-----
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// 初始化一个rpc请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">rpc</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">RPC</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 将rpc请求装入适配器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">adapter</span> <span class="o">:=</span> <span class="nf">NewRPCAdapter</span><span class="p">(</span><span class="nx">rpc</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 初始化一个http请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">http</span> <span class="p">=</span> <span class="nf">NewHttpClient</span><span class="p">(</span><span class="nx">adapter</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 发送http请求，实际上被转化成了rpc请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">http</span><span class="p">.</span><span class="nf">DoReq</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>适配器模式将目标类和适配者解耦，通过一个适配器类重现现有的适配者类。灵活性和拓展性较好，可以很方便的更换适配器，符合开闭原则。</p>
+<h2 id="外观模式">外观模式</h2>
+<p>外观模式较为常见也较为简单。比如现在有ABCD四个对象的不同方法，当某个业务需要同时调用AB对象中的方法时，则需要分别调用两次。而如果此时使用外观模式，在AB对象外新加一层“外观”，当调用外观的方法时就自动调用了AB对象中的方法。</p>
+<p><img src="https://redis.fran6k.live:1181/i/2023/01/17/63c6a99d04da7.png" alt="image-20230117215850340"></p>
+<p>此处不再举出代码案例。</p>
+
+
+<h3>这个系列的帖子</h3>
+<ul>
+  
+    <li><a href="/post/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F3-%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F/">设计模式3-结构型模式</a></li>
+  
+    <li><a href="/post/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F2-%E5%88%9B%E9%80%A0%E5%9E%8B%E6%A8%A1%E5%BC%8F/">设计模式2-创造型模式及应用</a></li>
+  
+    <li><a href="/post/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F1-%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/">设计模式1-设计原则</a></li>
+  
+</ul>
+</div>
+    <div class="post__footer">
+      
+        <span><a class="category" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></span>
+
+
+      
+
+      
+    </div>
+
+    
+  </div>
+
+      </main>
+    </div><footer class="footer footer__base">
+  <ul class="footer__list">
+    <li class="footer__item">
+      &copy;
+      
+        2024
+      
+    </li>
+    
+      <li class="footer__item">
+        <a
+          class="link"
+          href="https://beian.miit.gov.cn/#/Integrated/index"
+          
+            target="_blank" rel="noopener noreferrer"
+          
+          title=""
+        >
+          晋ICP备20007820号-1
+        </a>
+      </li>
+    
+  </ul>
+</footer>
+  
+  <script
+    type="text/javascript"
+    src="/js/medium-zoom.min.1248fa75275e5ef0cbef27e8c1e27dc507c445ae3a2c7d2ed0be0809555dac64.js"
+    integrity="sha256-Ekj6dSdeXvDL7yfoweJ9xQfERa46LH0u0L4ICVVdrGQ="
+    crossorigin="anonymous"
+  ></script></body>
+</html>

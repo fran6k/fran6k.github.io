@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html
+  dir="ltr"
+  lang="zh-cn"
+  data-theme=""
+  
+    class="html theme--light"
+  
+><head>
+  <title>
+    fran6k&#39;s blog
+        |
+        k8s源码3-kubeproxy以及令牌桶
+      
+
+    
+
+  </title>
+
+  
+  <meta charset="utf-8" /><meta name="generator" content="Hugo 0.111.3"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="author" content="fran6k&#39;s blog" />
+  <meta
+    name="description"
+    content="学生｜后端｜云原生
+在这里分享一些技术沉淀
+"
+  />
+  
+  
+    
+    
+    <link
+      rel="stylesheet"
+      href="/scss/main.min.853b40b40e3fdc2dc45fd58ccdf26cd746d2309db1b3f58856564adfb34ecae5.css"
+      integrity="sha256-hTtAtA4/3C3EX9WMzfJs10bSMJ2xs/WIVlZK37NOyuU="
+      crossorigin="anonymous"
+      type="text/css"
+    />
+  
+
+  
+  <link
+    rel="stylesheet"
+    href="/css/markupHighlight.min.2d1384e713286a803f77dd52bedaf63bc9a1428da2f19b58559e17412f43bdac.css"
+    integrity="sha256-LROE5xMoaoA/d91Svtr2O8mhQo2i8ZtYVZ4XQS9Dvaw="
+    crossorigin="anonymous"
+    type="text/css"
+  />
+  
+    
+    
+    <link
+      rel="stylesheet"
+      href="/css/syntax.min.7ac04f67eca661571e942c0456c2b00f691243597031edab6852106211ba1dd2.css"
+      integrity="sha256-esBPZ&#43;ymYVcelCwEVsKwD2kSQ1lwMe2raFIQYhG6HdI="
+      crossorigin="anonymous"
+      media="screen"
+    />
+  
+    
+    
+    <link
+      rel="stylesheet"
+      href="/css/font.min.c452ee21b0b6ea266bb9ade155d178350f351bf4e85a00363a3c30a1aeae6b07.css"
+      integrity="sha256-xFLuIbC26iZrua3hVdF4NQ81G/ToWgA2Ojwwoa6uawc="
+      crossorigin="anonymous"
+      media="screen"
+    />
+  
+  
+  <link
+    rel="stylesheet"
+    href="/fontawesome/css/fontawesome.min.7d272de35b410fb165377550cdf9c4d3a80fbbcc961e111914e4d5c0eaf5729f.css"
+    integrity="sha256-fSct41tBD7FlN3VQzfnE06gPu8yWHhEZFOTVwOr1cp8="
+    crossorigin="anonymous"
+    type="text/css"
+  />
+  
+  <link
+    rel="stylesheet"
+    href="/fontawesome/css/solid.min.55d8333481b07a08e07cf6f37319753a2b47e99f4c395394c5747b48b495aa9b.css"
+    integrity="sha256-VdgzNIGwegjgfPbzcxl1OitH6Z9MOVOUxXR7SLSVqps="
+    crossorigin="anonymous"
+    type="text/css"
+  />
+  
+  <link
+    rel="stylesheet"
+    href="/fontawesome/css/regular.min.a7448d02590b43449364b6b5922ed9af5410abb4de4238412a830316dedb850b.css"
+    integrity="sha256-p0SNAlkLQ0STZLa1ki7Zr1QQq7TeQjhBKoMDFt7bhQs="
+    crossorigin="anonymous"
+    type="text/css"
+  />
+  
+  <link
+    rel="stylesheet"
+    href="/fontawesome/css/brands.min.9ed75a5d670c953fe4df935937674b4646f92674367e9e66eb995bb04e821647.css"
+    integrity="sha256-ntdaXWcMlT/k35NZN2dLRkb5JnQ2fp5m65lbsE6CFkc="
+    crossorigin="anonymous"
+    type="text/css"
+  />
+  
+  <link rel="shortcut icon" href="/favicons/favicon.ico" type="image/x-icon" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png" />
+
+  <link rel="canonical" href="https://fran6k.live/post/k8s%E6%BA%90%E7%A0%813-kubeproxy-1/" />
+
+  
+  
+  
+  
+  <script
+    type="text/javascript"
+    src="/js/anatole-header.min.ec8addde0700c05e25920a03b8118ffc37f3532a355915aa087628fe3a421b2e.js"
+    integrity="sha256-7Ird3gcAwF4lkgoDuBGP/DfzUyo1WRWqCHYo/jpCGy4="
+    crossorigin="anonymous"
+  ></script>
+
+  
+    
+    
+    <script
+      type="text/javascript"
+      src="/js/anatole-theme-switcher.min.d6d329d93844b162e8bed1e915619625ca91687952177552b9b3e211014a2957.js"
+      integrity="sha256-1tMp2ThEsWLovtHpFWGWJcqRaHlSF3VSubPiEQFKKVc="
+      crossorigin="anonymous"
+    ></script>
+  
+
+  
+
+
+  
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="k8s源码3-kubeproxy以及令牌桶"/>
+<meta name="twitter:description" content=""/>
+
+
+
+  
+  <meta property="og:title" content="k8s源码3-kubeproxy以及令牌桶" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fran6k.live/post/k8s%E6%BA%90%E7%A0%813-kubeproxy-1/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-01-18T20:04:00+08:00" />
+<meta property="article:modified_time" content="2023-01-18T20:04:00+08:00" /><meta property="og:site_name" content="fran6k" />
+
+
+
+
+
+  
+  
+  
+  
+  <script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "articleSection": "post",
+        "name": "k8s源码3-kubeproxy以及令牌桶",
+        "headline": "k8s源码3-kubeproxy以及令牌桶",
+        "alternativeHeadline": "",
+        "description": "
+      
+        
+
+
+      
+
+
+    ",
+        "inLanguage": "zh-cn",
+        "isFamilyFriendly": "true",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/fran6k.live\/post\/k8s%E6%BA%90%E7%A0%813-kubeproxy-1\/"
+        },
+        "author" : {
+            "@type": "Person",
+            "name": "fran6k\u0027s blog"
+        },
+        "creator" : {
+            "@type": "Person",
+            "name": "fran6k\u0027s blog"
+        },
+        "accountablePerson" : {
+            "@type": "Person",
+            "name": "fran6k\u0027s blog"
+        },
+        "copyrightHolder" : {
+            "@type": "Person",
+            "name": "fran6k\u0027s blog"
+        },
+        "copyrightYear" : "2023",
+        "dateCreated": "2023-01-18T20:04:00.00Z",
+        "datePublished": "2023-01-18T20:04:00.00Z",
+        "dateModified": "2023-01-18T20:04:00.00Z",
+        "publisher":{
+            "@type":"Organization",
+            "name": "fran6k's blog",
+            "url": "https://fran6k.live",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/fran6k.live\/favicons\/favicon-32x32.png",
+                "width":"32",
+                "height":"32"
+            }
+        },
+        "image": 
+      [
+      ]
+
+    ,
+        "url" : "https:\/\/fran6k.live\/post\/k8s%E6%BA%90%E7%A0%813-kubeproxy-1\/",
+        "wordCount" : "1367",
+        "genre" : [ 
+      
+      "技术"
+
+    ],
+        "keywords" : [ ]
+    }
+  </script>
+
+
+</head>
+<body class="body">
+    <div class="wrapper">
+
+
+
+
+
+
+
+
+        
+        <aside class="wrapper__sidebar"><div class="sidebar__toc">
+    <h3>目录</h3>
+
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#早期版本">早期版本</a></li>
+    <li><a href="#k8s-126">K8s 1.26</a></li>
+    <li><a href="#令牌桶">令牌桶</a></li>
+  </ul>
+</nav>
+
+
+</div></aside>
+        
+
+      <main
+        
+          class="wrapper__main sidebar__line"
+        
+      >
+        <header class="header"><div
+  class="
+    animated fadeInDown
+  "
+>
+  <a role="button" class="navbar-burger" data-target="navMenu" aria-label="menu" aria-expanded="false">
+    <span aria-hidden="true" class="navbar-burger__line"></span>
+    <span aria-hidden="true" class="navbar-burger__line"></span>
+    <span aria-hidden="true" class="navbar-burger__line"></span>
+  </a>
+  <nav class="nav">
+    <ul class="nav__list" id="navMenu">
+      
+      
+        
+        
+          <li class="nav__list-item">
+            <a
+              
+              href="/"
+              
+              title=""
+              >主页</a
+            >
+          </li>
+        
+
+      
+        
+        
+          <li class="nav__list-item">
+            <a
+              
+              href="/post/"
+              
+              title=""
+              >文章</a
+            >
+          </li>
+        
+
+      
+        
+        
+          <li class="nav__list-item">
+            <a
+              
+              href="/about/"
+              
+              title=""
+              >关于</a
+            >
+          </li>
+        
+
+      
+        
+        
+          <li class="nav__list-item">
+            <a
+              
+              href="/friend-link/"
+              
+              title=""
+              >友情链接</a
+            >
+          </li>
+        
+
+      
+    </ul>
+    <ul class="nav__list nav__list--end">
+      
+      
+        <li class="nav__list-item">
+          <div class="themeswitch">
+            <a title="Switch Theme">
+              <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a>
+          </div>
+        </li>
+      
+    </ul>
+  </nav>
+</div>
+</header>
+  <div
+    class="post 
+      animated fadeInDown
+    "
+  >
+    
+    <div class="post__content">
+      <h1>K8s源码3-Kubeproxy以及令牌桶</h1>
+      
+        <ul class="post__meta">
+          <li class="post__meta-item">
+            <em class="fas fa-calendar-day post__meta-icon"></em>
+            <span class="post__meta-text"
+              >
+                
+                  2023年1月18日 20:04
+                
+
+              
+            </span>
+          </li>
+          <li class="post__meta-item">
+            <em class="fas fa-stopwatch post__meta-icon"></em>
+            <span class="post__meta-text">阅读时间 7 分钟</span>
+          </li>
+        </ul>
+      
+
+
+
+
+      <h2 id="早期版本">早期版本</h2>
+<p>简单看一下kubeproxy是如何进行轮训调度的</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// 这个LoadBalancerRR是一个单例模式，全局只有一个实例。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">LoadBalancerRR</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">lock</span>         <span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// endpointsMap存储的是servcie和对应的endpoints[]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">endpointsMap</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">][]</span><span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// rrIndex是service和该service当前的轮训Index索引
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">rrIndex</span>      <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewLoadBalancerRR</span><span class="p">()</span> <span class="o">*</span><span class="nx">LoadBalancerRR</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="o">&amp;</span><span class="nx">LoadBalancerRR</span><span class="p">{</span><span class="nx">endpointsMap</span><span class="p">:</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">][]</span><span class="kt">string</span><span class="p">),</span> <span class="nx">rrIndex</span><span class="p">:</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">int</span><span class="p">)}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">impl</span> <span class="nx">LoadBalancerRR</span><span class="p">)</span> <span class="nf">LoadBalance</span><span class="p">(</span><span class="nx">service</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">srcAddr</span> <span class="nx">net</span><span class="p">.</span><span class="nx">Addr</span><span class="p">)</span> <span class="p">(</span><span class="kt">string</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">impl</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">RLock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 先从endpointMap中拿到此servive，得到一个[]string，里面是对应的endpoint地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">endpoints</span><span class="p">,</span> <span class="nx">exists</span> <span class="o">:=</span> <span class="nx">impl</span><span class="p">.</span><span class="nx">endpointsMap</span><span class="p">[</span><span class="nx">service</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// rrIndex中是service和该service当前的轮训调度index的映射
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">index</span> <span class="o">:=</span> <span class="nx">impl</span><span class="p">.</span><span class="nx">rrIndex</span><span class="p">[</span><span class="nx">service</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">impl</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">RUnlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">exists</span> <span class="o">==</span> <span class="kc">false</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;no service entry for:&#34;</span> <span class="o">+</span> <span class="nx">service</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">endpoints</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;no endpoints for: &#34;</span> <span class="o">+</span> <span class="nx">service</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 拿到当前service中，index索引对应的endpoint
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">endpoint</span> <span class="o">:=</span> <span class="nx">endpoints</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// index索引++
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">impl</span><span class="p">.</span><span class="nx">rrIndex</span><span class="p">[</span><span class="nx">service</span><span class="p">]</span> <span class="p">=</span> <span class="p">(</span><span class="nx">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="nx">endpoints</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">endpoint</span><span class="p">,</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>接下来看proxy</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Proxier</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">loadBalancer</span> <span class="nx">LoadBalancer</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">serviceMap</span>   <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">proxier</span> <span class="nx">Proxier</span><span class="p">)</span> <span class="nf">AcceptHandler</span><span class="p">(</span><span class="nx">service</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">listener</span> <span class="nx">net</span><span class="p">.</span><span class="nx">Listener</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">inConn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">listener</span><span class="p">.</span><span class="nf">Accept</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Accept failed: %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">continue</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Accepted connection from: %v to %v&#34;</span><span class="p">,</span> <span class="nx">inConn</span><span class="p">.</span><span class="nf">RemoteAddr</span><span class="p">(),</span> <span class="nx">inConn</span><span class="p">.</span><span class="nf">LocalAddr</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		<span class="c1">// Figure out where this request should go.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">endpoint</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">proxier</span><span class="p">.</span><span class="nx">loadBalancer</span><span class="p">.</span><span class="nf">LoadBalance</span><span class="p">(</span><span class="nx">service</span><span class="p">,</span> <span class="nx">inConn</span><span class="p">.</span><span class="nf">RemoteAddr</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Couldn&#39;t find an endpoint for %s %v&#34;</span><span class="p">,</span> <span class="nx">service</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">inConn</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">			<span class="k">continue</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Mapped service %s to endpoint %s&#34;</span><span class="p">,</span> <span class="nx">service</span><span class="p">,</span> <span class="nx">endpoint</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">outConn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">DialTimeout</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="nx">endpoint</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Duration</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">*</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// We basically need to take everything from inConn and send to outConn
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">// and anything coming from outConn needs to be sent to inConn.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Dial failed: %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">inConn</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">			<span class="k">continue</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="k">go</span> <span class="nf">ProxyConnection</span><span class="p">(</span><span class="nx">inConn</span><span class="p">.(</span><span class="o">*</span><span class="nx">net</span><span class="p">.</span><span class="nx">TCPConn</span><span class="p">),</span> <span class="nx">outConn</span><span class="p">.(</span><span class="o">*</span><span class="nx">net</span><span class="p">.</span><span class="nx">TCPConn</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>这里逻辑也是比较简单，每一个service都有一个AcceptHandler，监听某个端口。如果有新的连接进来，就调用loadBalancer.loadBalance()选择一个endpoint，之后启动一个ProxyConnection协程进行TCP转发。</p>
+<h2 id="k8s-126">K8s 1.26</h2>
+<p>由于代码量非常多，所以此处只贴出函数调用栈和部分代码。</p>
+<p><img src="https://redis.fran6k.live:1181/i/2023/01/18/63c7a4de32f1e.png" alt="image-20230118155037120"></p>
+<p>kube-proxy大体流程是通过Run()方法启动一个proxyServer。ProxyServer初始化时会拥有一个Proxier，Proxier有iptables，ipvs等模式，这里只介绍iptables。proxier进行一系列初始化操作后，最终会调用syncRunner.Loop()开始循环处理。syncRunner类型是BoundedFrequencyRunner。这里主要看一下BoundedFrequencyRunner的代码实现。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// NewBoundedFrequencyRunner(&#34;name&#34;, fn, 3*time.Second, 10*time.Second, 3)
+</span></span></span><span class="line"><span class="cl"><span class="c1">// - fn will have at least 3 seconds between runs, with up to 3 burst runs
+</span></span></span><span class="line"><span class="cl"><span class="c1">// - fn will hav e no more than 10 seconds between runs
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 这里fn传进来的是proxier.syncProxyRules，刷新iptables规则，不同模式的proxier有不同的syncProxyRules，此暂时不介绍。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">NewBoundedFrequencyRunner</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">fn</span> <span class="kd">func</span><span class="p">(),</span> <span class="nx">minInterval</span><span class="p">,</span> <span class="nx">maxInterval</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">,</span> <span class="nx">burstRuns</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="nx">BoundedFrequencyRunner</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// TODO 这里占个坑，后续研究了timer源码后再来看这里为什么要先消费掉第一个tick
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">timer</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">realTimer</span><span class="p">{</span><span class="nx">timer</span><span class="p">:</span> <span class="nx">time</span><span class="p">.</span><span class="nf">NewTimer</span><span class="p">(</span><span class="mi">0</span><span class="p">)}</span> <span class="c1">// will tick immediately
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="o">&lt;-</span><span class="nx">timer</span><span class="p">.</span><span class="nf">C</span><span class="p">()</span>                                  <span class="c1">// consume the first tick
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">return</span> <span class="nf">construct</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">minInterval</span><span class="p">,</span> <span class="nx">maxInterval</span><span class="p">,</span> <span class="nx">burstRuns</span><span class="p">,</span> <span class="nx">timer</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Make an instance with dependencies injected.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">construct</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">fn</span> <span class="kd">func</span><span class="p">(),</span> <span class="nx">minInterval</span><span class="p">,</span> <span class="nx">maxInterval</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">,</span> <span class="nx">burstRuns</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">timer</span> <span class="nx">timer</span><span class="p">)</span> <span class="o">*</span><span class="nx">BoundedFrequencyRunner</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">  <span class="o">...</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">bfr</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">BoundedFrequencyRunner</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">name</span><span class="p">:</span>        <span class="nx">name</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fn</span><span class="p">:</span>          <span class="nx">fn</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">minInterval</span><span class="p">:</span> <span class="nx">minInterval</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">maxInterval</span><span class="p">:</span> <span class="nx">maxInterval</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">run</span><span class="p">:</span>         <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{},</span> <span class="mi">1</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">retry</span><span class="p">:</span>       <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{},</span> <span class="mi">1</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">timer</span><span class="p">:</span>       <span class="nx">timer</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">minInterval</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">bfr</span><span class="p">.</span><span class="nx">limiter</span> <span class="p">=</span> <span class="nx">nullLimiter</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 采用“令牌桶”算法实现流控机制
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">qps</span> <span class="o">:=</span> <span class="nb">float32</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float32</span><span class="p">(</span><span class="nx">minInterval</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">bfr</span><span class="p">.</span><span class="nx">limiter</span> <span class="p">=</span> <span class="nx">flowcontrol</span><span class="p">.</span><span class="nf">NewTokenBucketRateLimiterWithClock</span><span class="p">(</span><span class="nx">qps</span><span class="p">,</span> <span class="nx">burstRuns</span><span class="p">,</span> <span class="nx">timer</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">bfr</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 循环
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">bfr</span> <span class="o">*</span><span class="nx">BoundedFrequencyRunner</span><span class="p">)</span> <span class="nf">Loop</span><span class="p">(</span><span class="nx">stop</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">klog</span><span class="p">.</span><span class="nf">V</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="nf">Infof</span><span class="p">(</span><span class="s">&#34;%s Loop running&#34;</span><span class="p">,</span> <span class="nx">bfr</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">bfr</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nf">Reset</span><span class="p">(</span><span class="nx">bfr</span><span class="p">.</span><span class="nx">maxInterval</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">stop</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">bfr</span><span class="p">.</span><span class="nf">stop</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">klog</span><span class="p">.</span><span class="nf">V</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="nf">Infof</span><span class="p">(</span><span class="s">&#34;%s Loop stopping&#34;</span><span class="p">,</span> <span class="nx">bfr</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 每间隔一定时间，执行一次
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">bfr</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nf">C</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">bfr</span><span class="p">.</span><span class="nf">tryRun</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 突发执行
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">bfr</span><span class="p">.</span><span class="nx">run</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">bfr</span><span class="p">.</span><span class="nf">tryRun</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">bfr</span><span class="p">.</span><span class="nx">retry</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">bfr</span><span class="p">.</span><span class="nf">doRetry</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>Proxier所有的更新，添加等方法最终都落到了bfr.run或retry这两个chan，来突发/抢占执行相应的syncProxyRules。</p>
+<p><img src="https://redis.fran6k.live:1181/i/2023/01/18/63c7ab4ecc431.png" alt="image-20230118161819307"></p>
+<p>proxier.sync()调用了proxier.syncRunner.Run()，即向bfr.run中发送一个空结构体struct{} {}</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// Run the function as soon as possible.  If this is called while Loop is not
+</span></span></span><span class="line"><span class="cl"><span class="c1">// running, the call may be deferred indefinitely.
+</span></span></span><span class="line"><span class="cl"><span class="c1">// If there is already a queued request to call the underlying function, it
+</span></span></span><span class="line"><span class="cl"><span class="c1">// may be dropped - it is just guaranteed that we will try calling the
+</span></span></span><span class="line"><span class="cl"><span class="c1">// underlying function as soon as possible starting from now.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">bfr</span> <span class="o">*</span><span class="nx">BoundedFrequencyRunner</span><span class="p">)</span> <span class="nf">Run</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// If it takes a lot of time to run the underlying function, noone is really
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// processing elements from &lt;run&gt; channel. So to avoid blocking here on the
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// putting element to it, we simply skip it if there is already an element
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// in it.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 翻译：满则丢弃，避免阻塞，尽最大可能Run
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 具体这么做的原因是因为，BoundedFrequencyRunner中对run进行了限流，来防止无限制刷新iptables造成服务器宕机
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="nx">bfr</span><span class="p">.</span><span class="nx">run</span> <span class="o">&lt;-</span> <span class="kd">struct</span><span class="p">{}{}:</span>
+</span></span><span class="line"><span class="cl">	<span class="k">default</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>接下来介绍在BoundedFrequencyRunner的Loop中，当有空结构体到来时，如何tryRun()</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// assumes the lock is not held
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">bfr</span> <span class="o">*</span><span class="nx">BoundedFrequencyRunner</span><span class="p">)</span> <span class="nf">tryRun</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">bfr</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">bfr</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 如果可以立即执行（拿到令牌）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 此处拿令牌不可以使用Accept方法阻塞拿取，否则会阻塞Loop循环，影响正常业务逻辑。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="nx">bfr</span><span class="p">.</span><span class="nx">limiter</span><span class="p">.</span><span class="nf">TryAccept</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// We&#39;re allowed to run the function right now.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">bfr</span><span class="p">.</span><span class="nf">fn</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">bfr</span><span class="p">.</span><span class="nx">lastRun</span> <span class="p">=</span> <span class="nx">bfr</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nf">Now</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">bfr</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nf">Stop</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 重设最大时间，开始下一轮最大时长计时
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">bfr</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nf">Reset</span><span class="p">(</span><span class="nx">bfr</span><span class="p">.</span><span class="nx">maxInterval</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">klog</span><span class="p">.</span><span class="nf">V</span><span class="p">(</span><span class="mi">3</span><span class="p">).</span><span class="nf">Infof</span><span class="p">(</span><span class="s">&#34;%s: ran, next possible in %v, periodic in %v&#34;</span><span class="p">,</span> <span class="nx">bfr</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="nx">bfr</span><span class="p">.</span><span class="nx">minInterval</span><span class="p">,</span> <span class="nx">bfr</span><span class="p">.</span><span class="nx">maxInterval</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">	<span class="c1">// 如果不能立即执行，则计算下一次执行时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">elapsed</span> <span class="o">:=</span> <span class="nx">bfr</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nf">Since</span><span class="p">(</span><span class="nx">bfr</span><span class="p">.</span><span class="nx">lastRun</span><span class="p">)</span>   <span class="c1">// 从上一次执行到现在过了多久
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">nextPossible</span> <span class="o">:=</span> <span class="nx">bfr</span><span class="p">.</span><span class="nx">minInterval</span> <span class="o">-</span> <span class="nx">elapsed</span> <span class="c1">// 至少还需要多少时间才能被调度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">nextScheduled</span> <span class="o">:=</span> <span class="nx">bfr</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nf">Remaining</span><span class="p">()</span>    <span class="c1">// 至多需要多少时间就会被调度
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">klog</span><span class="p">.</span><span class="nf">V</span><span class="p">(</span><span class="mi">4</span><span class="p">).</span><span class="nf">Infof</span><span class="p">(</span><span class="s">&#34;%s: %v since last run, possible in %v, scheduled in %v&#34;</span><span class="p">,</span> <span class="nx">bfr</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="nx">elapsed</span><span class="p">,</span> <span class="nx">nextPossible</span><span class="p">,</span> <span class="nx">nextScheduled</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// It&#39;s hard to avoid race conditions in the unit tests unless we always reset
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// the timer here, even when it&#39;s unchanged
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="nx">nextPossible</span> <span class="p">&lt;</span> <span class="nx">nextScheduled</span> <span class="p">{</span> <span class="c1">// 判断大小，选择最近的时间。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">nextScheduled</span> <span class="p">=</span> <span class="nx">nextPossible</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">bfr</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nf">Stop</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">bfr</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nf">Reset</span><span class="p">(</span><span class="nx">nextScheduled</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>那么BoundedFrequencyRunner是如何计算是否可以立即执行呢，那么就要回到上文中的这两条代码。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl">	<span class="c1">// 构造bfr时，采用“令牌桶”算法实现流控机制得到limiter
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">qps</span> <span class="o">:=</span> <span class="nb">float32</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float32</span><span class="p">(</span><span class="nx">minInterval</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">bfr</span><span class="p">.</span><span class="nx">limiter</span> <span class="p">=</span> <span class="nx">flowcontrol</span><span class="p">.</span><span class="nf">NewTokenBucketRateLimiterWithClock</span><span class="p">(</span><span class="nx">qps</span><span class="p">,</span> <span class="nx">burstRuns</span><span class="p">,</span> <span class="nx">timer</span><span class="p">)</span>
+</span></span></code></pre></div><p>接下来看令牌桶算法的实现。</p>
+<h2 id="令牌桶">令牌桶</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">NewTokenBucketRateLimiter</span><span class="p">(</span><span class="nx">qps</span> <span class="kt">float32</span><span class="p">,</span> <span class="nx">burst</span> <span class="kt">int</span><span class="p">)</span> <span class="nx">RateLimiter</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">limiter</span> <span class="o">:=</span> <span class="nx">rate</span><span class="p">.</span><span class="nf">NewLimiter</span><span class="p">(</span><span class="nx">rate</span><span class="p">.</span><span class="nf">Limit</span><span class="p">(</span><span class="nx">qps</span><span class="p">),</span> <span class="nx">burst</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nf">newTokenBucketRateLimiterWithClock</span><span class="p">(</span><span class="nx">limiter</span><span class="p">,</span> <span class="nx">clock</span><span class="p">.</span><span class="nx">RealClock</span><span class="p">{},</span> <span class="nx">qps</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">...</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">newTokenBucketRateLimiterWithClock</span><span class="p">(</span><span class="nx">limiter</span> <span class="o">*</span><span class="nx">rate</span><span class="p">.</span><span class="nx">Limiter</span><span class="p">,</span> <span class="nx">c</span> <span class="nx">Clock</span><span class="p">,</span> <span class="nx">qps</span> <span class="kt">float32</span><span class="p">)</span> <span class="o">*</span><span class="nx">tokenBucketRateLimiter</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="o">&amp;</span><span class="nx">tokenBucketRateLimiter</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">tokenBucketPassiveRateLimiter</span><span class="p">:</span> <span class="o">*</span><span class="nf">newTokenBucketRateLimiterWithPassiveClock</span><span class="p">(</span><span class="nx">limiter</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">qps</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">clock</span><span class="p">:</span>                         <span class="nx">c</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">...</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 最终返回的是tokenBucketRateLimiter
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">tokenBucketRateLimiter</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">tokenBucketPassiveRateLimiter</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">clock</span> <span class="nx">Clock</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">...</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// tokenBucketPassiveRateLimiter 继承了 tokenBucketRateLimiter
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">tokenBucketPassiveRateLimiter</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">limiter</span> <span class="o">*</span><span class="nx">rate</span><span class="p">.</span><span class="nx">Limiter</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">qps</span>     <span class="kt">float32</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">clock</span>   <span class="nx">clock</span><span class="p">.</span><span class="nx">PassiveClock</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">...</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// BoundedFrequencyRunner的tryRun中，申请令牌桶，调用了TryAccept
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">tbprl</span> <span class="o">*</span><span class="nx">tokenBucketPassiveRateLimiter</span><span class="p">)</span> <span class="nf">TryAccept</span><span class="p">()</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">tbprl</span><span class="p">.</span><span class="nx">limiter</span><span class="p">.</span><span class="nf">AllowN</span><span class="p">(</span><span class="nx">tbprl</span><span class="p">.</span><span class="nx">clock</span><span class="p">.</span><span class="nf">Now</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">...</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// AllowN reports whether n events may happen at time now.
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Use this method if you intend to drop / skip events that exceed the rate limit.
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Otherwise use Reserve or Wait.
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 意思是超出限制就丢掉
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">lim</span> <span class="o">*</span><span class="nx">Limiter</span><span class="p">)</span> <span class="nf">AllowN</span><span class="p">(</span><span class="nx">now</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span><span class="p">,</span> <span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">lim</span><span class="p">.</span><span class="nf">reserveN</span><span class="p">(</span><span class="nx">now</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">).</span><span class="nx">ok</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>由此得出，最终令牌桶的实现方法在reserveN内</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">lim</span> <span class="o">*</span><span class="nx">Limiter</span><span class="p">)</span> <span class="nf">reserveN</span><span class="p">(</span><span class="nx">now</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span><span class="p">,</span> <span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">maxFutureReserve</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">)</span> <span class="nx">Reservation</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">lim</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">lim</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 如果对于QPS没有限制，则直接返回。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="nx">lim</span><span class="p">.</span><span class="nx">limit</span> <span class="o">==</span> <span class="nx">Inf</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">Reservation</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">ok</span><span class="p">:</span>        <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">lim</span><span class="p">:</span>       <span class="nx">lim</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">tokens</span><span class="p">:</span>    <span class="nx">n</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">timeToAct</span><span class="p">:</span> <span class="nx">now</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">lim</span><span class="p">.</span><span class="nx">limit</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="kd">var</span> <span class="nx">ok</span> <span class="kt">bool</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">lim</span><span class="p">.</span><span class="nx">burst</span> <span class="o">&gt;=</span> <span class="nx">n</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">ok</span> <span class="p">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">lim</span><span class="p">.</span><span class="nx">burst</span> <span class="o">-=</span> <span class="nx">n</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">Reservation</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">ok</span><span class="p">:</span>        <span class="nx">ok</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">lim</span><span class="p">:</span>       <span class="nx">lim</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">tokens</span><span class="p">:</span>    <span class="nx">lim</span><span class="p">.</span><span class="nx">burst</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">timeToAct</span><span class="p">:</span> <span class="nx">now</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 计算过去的这段时间中，生成了多少tokens，满了则丢掉
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">now</span><span class="p">,</span> <span class="nx">last</span><span class="p">,</span> <span class="nx">tokens</span> <span class="o">:=</span> <span class="nx">lim</span><span class="p">.</span><span class="nf">advance</span><span class="p">(</span><span class="nx">now</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// Calculate the remaining number of tokens resulting from the request.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 取出tokens
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">tokens</span> <span class="o">-=</span> <span class="nb">float64</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// Calculate the wait duration
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 如果tokens不够取，则等待生成
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kd">var</span> <span class="nx">waitDuration</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">tokens</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">waitDuration</span> <span class="p">=</span> <span class="nx">lim</span><span class="p">.</span><span class="nx">limit</span><span class="p">.</span><span class="nf">durationFromTokens</span><span class="p">(</span><span class="o">-</span><span class="nx">tokens</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 如果要取的token数量&lt;=桶的最大数量，并且tokens不够时，&lt;=最大等待时间（此处是0）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 则定义一个flag，表示取出成功
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// Decide result
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">ok</span> <span class="o">:=</span> <span class="nx">n</span> <span class="o">&lt;=</span> <span class="nx">lim</span><span class="p">.</span><span class="nx">burst</span> <span class="o">&amp;&amp;</span> <span class="nx">waitDuration</span> <span class="o">&lt;=</span> <span class="nx">maxFutureReserve</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 准备一个预定结果
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">r</span> <span class="o">:=</span> <span class="nx">Reservation</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">ok</span><span class="p">:</span>    <span class="nx">ok</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">lim</span><span class="p">:</span>   <span class="nx">lim</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">limit</span><span class="p">:</span> <span class="nx">lim</span><span class="p">.</span><span class="nx">limit</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 预定成功，则附加一些预定信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="nx">ok</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">r</span><span class="p">.</span><span class="nx">tokens</span> <span class="p">=</span> <span class="nx">n</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">r</span><span class="p">.</span><span class="nx">timeToAct</span> <span class="p">=</span> <span class="nx">now</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">waitDuration</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 更新Limiter中last，tokens等信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="nx">ok</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">lim</span><span class="p">.</span><span class="nx">last</span> <span class="p">=</span> <span class="nx">now</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">lim</span><span class="p">.</span><span class="nx">tokens</span> <span class="p">=</span> <span class="nx">tokens</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">lim</span><span class="p">.</span><span class="nx">lastEvent</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">timeToAct</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">lim</span><span class="p">.</span><span class="nx">last</span> <span class="p">=</span> <span class="nx">last</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">r</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>这里补充一下advance()和tokensFromDuration()，durationFromTokens()是如何实现的。</p>
+<p>advance用来计算从上一次取令牌后到现在，桶里应该有多少令牌。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// advance calculates and returns an updated state for lim resulting from the passage of time.
+</span></span></span><span class="line"><span class="cl"><span class="c1">// lim is not changed.
+</span></span></span><span class="line"><span class="cl"><span class="c1">// advance requires that lim.mu is held.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">lim</span> <span class="o">*</span><span class="nx">Limiter</span><span class="p">)</span> <span class="nf">advance</span><span class="p">(</span><span class="nx">now</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span><span class="p">)</span> <span class="p">(</span><span class="nx">newNow</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span><span class="p">,</span> <span class="nx">newLast</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span><span class="p">,</span> <span class="nx">newTokens</span> <span class="kt">float64</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 拿到上一次取令牌的时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">last</span> <span class="o">:=</span> <span class="nx">lim</span><span class="p">.</span><span class="nx">last</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">now</span><span class="p">.</span><span class="nf">Before</span><span class="p">(</span><span class="nx">last</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">last</span> <span class="p">=</span> <span class="nx">now</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 计算过去了多久
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">elapsed</span> <span class="o">:=</span> <span class="nx">now</span><span class="p">.</span><span class="nf">Sub</span><span class="p">(</span><span class="nx">last</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 计算过去的时间中应该生成多少个令牌
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">delta</span> <span class="o">:=</span> <span class="nx">lim</span><span class="p">.</span><span class="nx">limit</span><span class="p">.</span><span class="nf">tokensFromDuration</span><span class="p">(</span><span class="nx">elapsed</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 将令牌添加到桶中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">tokens</span> <span class="o">:=</span> <span class="nx">lim</span><span class="p">.</span><span class="nx">tokens</span> <span class="o">+</span> <span class="nx">delta</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 桶满则丢弃
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="nx">burst</span> <span class="o">:=</span> <span class="nb">float64</span><span class="p">(</span><span class="nx">lim</span><span class="p">.</span><span class="nx">burst</span><span class="p">);</span> <span class="nx">tokens</span> <span class="p">&gt;</span> <span class="nx">burst</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">tokens</span> <span class="p">=</span> <span class="nx">burst</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">now</span><span class="p">,</span> <span class="nx">last</span><span class="p">,</span> <span class="nx">tokens</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>tokensFromDuration()根据时间计算令牌数量，durationFromTokens根据令牌数量计算时间</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// tokensFromDuration is a unit conversion function from a time duration to the number of tokens
+</span></span></span><span class="line"><span class="cl"><span class="c1">// which could be accumulated during that duration at a rate of limit tokens per second.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">limit</span> <span class="nx">Limit</span><span class="p">)</span> <span class="nf">tokensFromDuration</span><span class="p">(</span><span class="nx">d</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">)</span> <span class="kt">float64</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">limit</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 过去的时间*QPS（每秒生成token的数量）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">return</span> <span class="nx">d</span><span class="p">.</span><span class="nf">Seconds</span><span class="p">()</span> <span class="o">*</span> <span class="nb">float64</span><span class="p">(</span><span class="nx">limit</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// durationFromTokens is a unit conversion function from the number of tokens to the duration
+</span></span></span><span class="line"><span class="cl"><span class="c1">// of time it takes to accumulate them at a rate of limit tokens per second.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">limit</span> <span class="nx">Limit</span><span class="p">)</span> <span class="nf">durationFromTokens</span><span class="p">(</span><span class="nx">tokens</span> <span class="kt">float64</span><span class="p">)</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">limit</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">InfDuration</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// token的数量 / QPS（每秒生成token的数量） = 需要等待的时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">seconds</span> <span class="o">:=</span> <span class="nx">tokens</span> <span class="o">/</span> <span class="nb">float64</span><span class="p">(</span><span class="nx">limit</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Duration</span><span class="p">(</span><span class="nb">float64</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span> <span class="o">*</span> <span class="nx">seconds</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>简单总结一下，每次取token的时候，都会先计算出从上一次取token到现在新生成了多少token，最大不超过桶的数量，然后尝试取token。</p>
+<p>如果token不够，则计算生成缺少的token数量的时间，和maxFutureReserve做比较，&gt;则说明取出失败。此处maxFutureReserve为0，即缺少token就判定取出失败。否则取出成功。接下来就根据取出结果返回信息。</p>
+<p>k8s这里使用的令牌桶中Limter来自 golang.org/x/time/rate。取令牌有两个方法，Accept()和TryAccept()，区别只在于前者是阻塞式的，取不到令牌，则等待令牌生成，因此这里也写了两个类。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">PassiveRateLimiter</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// TryAccept returns true if a token is taken immediately. Otherwise,
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// it returns false.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">TryAccept</span><span class="p">()</span> <span class="kt">bool</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// Stop stops the rate limiter, subsequent calls to CanAccept will return false
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">Stop</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// QPS returns QPS of this rate limiter
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">QPS</span><span class="p">()</span> <span class="kt">float32</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 这里实现了设计模式中的代理模式
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">tokenBucketRateLimiter</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">tokenBucketPassiveRateLimiter</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">clock</span> <span class="nx">Clock</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">...</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">tokenBucketPassiveRateLimiter</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">limiter</span> <span class="o">*</span><span class="nx">rate</span><span class="p">.</span><span class="nx">Limiter</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">qps</span>     <span class="kt">float32</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">clock</span>   <span class="nx">clock</span><span class="p">.</span><span class="nx">PassiveClock</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>阻塞式Accept()方法来自tokenBucketRateLimiter，实现如下</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">tbrl</span> <span class="o">*</span><span class="nx">tokenBucketRateLimiter</span><span class="p">)</span> <span class="nf">Accept</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">now</span> <span class="o">:=</span> <span class="nx">tbrl</span><span class="p">.</span><span class="nx">clock</span><span class="p">.</span><span class="nf">Now</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 主动等待令牌生成的时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">tbrl</span><span class="p">.</span><span class="nx">clock</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">tbrl</span><span class="p">.</span><span class="nx">limiter</span><span class="p">.</span><span class="nf">ReserveN</span><span class="p">(</span><span class="nx">now</span><span class="p">,</span> <span class="mi">1</span><span class="p">).</span><span class="nf">DelayFrom</span><span class="p">(</span><span class="nx">now</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Reservation</span><span class="p">)</span> <span class="nf">DelayFrom</span><span class="p">(</span><span class="nx">now</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span><span class="p">)</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">!</span><span class="nx">r</span><span class="p">.</span><span class="nx">ok</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">InfDuration</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// timeToAct = now.Add(waitDuration)，即当需要取出的tokens不够，且等待的时间&lt;maxFutureReserve时，取出成功但需要等待生成tokens的时间。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">delay</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">timeToAct</span><span class="p">.</span><span class="nf">Sub</span><span class="p">(</span><span class="nx">now</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">delay</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">delay</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>回到Limiter，有三种取出的token的方式：AllowN（刚才所讲的），ReserveN和 WaitN，类似于代理模式，对reserveN(now time.Time, n int, maxFutureReserve time.Duration) 进行了一层包装。</p>
+<p>ReserveN中最大等待时间maxFutureReserve为无限大，所以取出数量&lt;=桶大小时，就会取出成功。</p>
+<p>WaitN同ReserveN，等待时间无限大。当成功取出后，就开始阻塞等待。此处WaitN方法也需要传入一个ctx来进行超时计时。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl">	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">NewTimer</span><span class="p">(</span><span class="nx">delay</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Stop</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">t</span><span class="p">.</span><span class="nx">C</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// We can proceed.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">ctx</span><span class="p">.</span><span class="nf">Done</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// Context was canceled before we could proceed.  Cancel the
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">// reservation, which may permit other events to proceed sooner.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">r</span><span class="p">.</span><span class="nf">Cancel</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">ctx</span><span class="p">.</span><span class="nf">Err</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span></code></pre></div><p>WaitN()和Accept()方法同样实现了阻塞等待，为什么还需要额外增加一个Accpet()方法呢，岂不是多此一举，过读设计。笔者认为其中一个可能的原因是k8s令牌桶不需要额外的计时逻辑。·</p>
+
+
+<h3>这个系列的帖子</h3>
+<ul>
+  
+    <li><a href="/post/k8s%E6%BA%90%E7%A0%813-kubeproxy-1/">K8s源码3-Kubeproxy以及令牌桶</a></li>
+  
+    <li><a href="/post/k8s%E6%BA%90%E7%A0%812-labelselector-parse/">K8s源码2-LabelSelector-Parse</a></li>
+  
+    <li><a href="/post/k8s%E6%BA%90%E7%A0%811-labelselector-selector/">K8s源码1-LabelSelector-Selector</a></li>
+  
+</ul>
+</div>
+    <div class="post__footer">
+      
+        <span><a class="category" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></span>
+
+
+      
+
+      
+    </div>
+
+    
+  </div>
+
+      </main>
+    </div><footer class="footer footer__base">
+  <ul class="footer__list">
+    <li class="footer__item">
+      &copy;
+      
+        2024
+      
+    </li>
+    
+      <li class="footer__item">
+        <a
+          class="link"
+          href="https://beian.miit.gov.cn/#/Integrated/index"
+          
+            target="_blank" rel="noopener noreferrer"
+          
+          title=""
+        >
+          晋ICP备20007820号-1
+        </a>
+      </li>
+    
+  </ul>
+</footer>
+  
+  <script
+    type="text/javascript"
+    src="/js/medium-zoom.min.1248fa75275e5ef0cbef27e8c1e27dc507c445ae3a2c7d2ed0be0809555dac64.js"
+    integrity="sha256-Ekj6dSdeXvDL7yfoweJ9xQfERa46LH0u0L4ICVVdrGQ="
+    crossorigin="anonymous"
+  ></script></body>
+</html>

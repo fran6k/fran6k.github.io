@@ -6,7 +6,18 @@
     <description>Recent content in k8s源码 on fran6k</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 14 Jan 2023 20:13:00 +0800</lastBuildDate><atom:link href="https://fran6k.live/series/k8s%E6%BA%90%E7%A0%81/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 18 Jan 2023 20:04:00 +0800</lastBuildDate><atom:link href="https://fran6k.live/series/k8s%E6%BA%90%E7%A0%81/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>k8s源码3-kubeproxy以及令牌桶</title>
+      <link>https://fran6k.live/post/k8s%E6%BA%90%E7%A0%813-kubeproxy-1/</link>
+      <pubDate>Wed, 18 Jan 2023 20:04:00 +0800</pubDate>
+      
+      <guid>https://fran6k.live/post/k8s%E6%BA%90%E7%A0%813-kubeproxy-1/</guid>
+      
+        <description></description>
+      
+    </item>
+    
     <item>
       <title>k8s源码2-LabelSelector-Parse</title>
       <link>https://fran6k.live/post/k8s%E6%BA%90%E7%A0%812-labelselector-parse/</link>
